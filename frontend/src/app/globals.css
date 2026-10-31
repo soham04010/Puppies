@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/storybook.css";
 
 :root {
   --background: #fffdf8;
@@ -10,7 +11,11 @@
   --honey-hover: #e5a84b;
   --cream: #fbf7ee;
   --cream-card: #f8f1e5;
-  --border-warm: #e8d9c5;
+  --border-warm: #ebd9c3;
+  --color-toffee-ink: #5a3a28;
+  --color-toffee-deep: #4a3728;
+  --color-blush: #fbeee6;
+  --color-honey-soft: #fbf0d8;
 }
 
 @theme inline {
@@ -21,11 +26,13 @@
   --color-honey-hover: #e5a84b;
   --color-cream: #fbf7ee;
   --color-cream-card: #f8f1e5;
-  --color-border-warm: #e8d9c5;
+  --color-border-warm: #ebd9c3;
 
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-figtree), system-ui, -apple-system, sans-serif;
   --font-scrawl: var(--font-shantell), cursive, sans-serif;
+  --font-hand: var(--font-shantell), cursive, sans-serif;
+  --font-plush: var(--font-fraunces), Georgia, serif;
 }
 
 /* Fallback position utilities for Next.js Image fill containers */
@@ -74,41 +81,14 @@ a, button, input, select, textarea, [role="button"], label, .clickable {
   background: #d4bc9e;
 }
 
-/* Paw animation keyframes */
-@keyframes paw-pat {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-4px) rotate(3deg);
-  }
+/* Scroll reveal helper classes */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-paw-pat {
-  animation: paw-pat 2.5s ease-in-out infinite;
-}
-
-/* Letterform Styles */
-.tp-letterform {
-  background-color: #ffffff;
-  border: 2px solid #e8d9c5;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  position: relative;
-  box-shadow: 0 10px 25px -5px rgba(74, 55, 40, 0.05), 0 8px 10px -6px rgba(74, 55, 40, 0.05);
-}
-
-.tp-letter__stamp {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  width: 3.5rem;
-  height: 4rem;
-  border: 2px dashed #4a3728;
-  border-radius: 0.375rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(6deg);
-  background-color: #fbf7ee;
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
 }

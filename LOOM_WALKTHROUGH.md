@@ -11,108 +11,101 @@
 
 ```
 Timeline Overview:
-00:00 - 00:45 ➔ Introduction & Live Website Demo (UI, Cursor, Letterform)
-00:45 - 01:45 ➔ Project Structure & Separation of Concerns (frontend/ & backend/)
-01:45 - 02:45 ➔ Technologies & Architectural Implementation Decisions
-02:45 - 03:45 ➔ AI Tools Used & Exact Prompts Disclosure (Per Assignment Guidelines)
-03:45 - 04:45 ➔ Challenges Overcome & Problem-Solving Approach
-04:45 - 05:30 ➔ Testing, Deployment Process & Conclusion
+00:00 - 00:45 ➔ Introduction & Opening Blanket Curtain Animation
+00:45 - 01:45 ➔ Storybook Interactive Elements (Phone Simulator, Two Ways Fork, Paw Cursor)
+01:45 - 02:45 ➔ Mad-Libs Stationery Contact Letter & Postal Mailbox Animation
+02:45 - 03:45 ➔ Project Structure & Separation of Concerns (frontend/ & backend/)
+03:45 - 04:30 ➔ AI Tools Used & Exact Prompts Disclosure (Per Assignment Guidelines)
+04:30 - 05:15 ➔ Challenges Overcome & Technical Decisions
+05:15 - 05:45 ➔ Testing, Production Build & Deployment Process
 ```
 
 ---
 
 ## 🗣️ Word-for-Word Script & Screen Actions
 
-### 1. Introduction & Live Demo (00:00 – 00:45)
-* **What to Show on Screen**: The running cloned website on `http://localhost:3000` (or your live deployed Vercel URL).
+### 1. Introduction & Opening Curtain Animation (00:00 – 00:45)
+* **What to Show on Screen**: Refresh the running website on `http://localhost:3000` (or your live deployed Vercel URL).
 * **What to Say**:
   > *"Hi Gaurav and the Insta Biz Web technical team! My name is [Your Name], and this is my submission for the Technical Round Assignment: cloning the TeddyPups U.A.E. website.*  
   >  
-  > *As you can see, I have replicated the complete design, typography, layout, responsiveness, and interactivity of the reference site. Notice the custom paw cursor that tracks across the screen, the gentle paw trail particles, and the exact warm cocoa, milk, and honey color palette.*  
+  > *Watch the screen as I refresh: you can see the signature blanket curtain intro animation where the little puppy runs across leaving paw prints before the blanket lifts up smoothly to unveil the luxury boutique layout.*  
   >  
-  > *All pages are fully implemented and functional: the Homepage, Available Puppies catalog with real-time filtering, individual Puppy profile pages with multi-photo galleries, How it Works, Happy Families, Gone Home alumni, FAQ accordions, and the Contact page."*
+  > *Notice the custom paw cursor that tracks across the screen, the gentle paw trail particle physics that follows mouse movement, and the exact warm cocoa, milk, and honey color palette matching the reference site."*
 
 ---
 
-### 2. Live Feature Demonstration (00:45 – 01:30)
+### 2. Storybook Interactive Elements & Phone Simulator (00:45 – 01:45)
 * **What to Show on Screen**:
-  1. Go to `/puppies` and click the filter pills (`Maltipoo`, `Showroom in Dubai`).
-  2. Click into a puppy (e.g. `Max` or `Korean Teacup Maltipoo`).
-  3. Scroll down to the signature letterform enquiry (`tp-letterform`).
-  4. Submit an enquiry and show the confetti trigger and success state.
-  5. Open browser DevTools Network tab to show the `POST /api/enquiries` request returning `201 Created`.
+  1. Scroll down to **Section 3 (Two Ways to Meet Your Puppy)**:
+     * Point out the wooden fork signpost (`tp-fork`).
+     * Show the Dubai skyline with Burj Khalifa SVG and the showroom window on the left.
+     * Show the Korean flight route with the bobbing airplane and porthole puppy on the right.
+  2. Scroll down to **Section 4 (Your Puppy Journey & WhatsApp Simulator)**:
+     * Click Step 1 ("Choose your breed") ➔ Show breed filter chips.
+     * Click Step 2 ("Get photos & details") ➔ Show animated puppy photo album and click the video play button to play the showroom puppy video!
+     * Click Step 3 ("Secure & safe delivery") ➔ Show the animated flight route SVG from Seoul to Dubai with home arrival.
+     * Notice the typing indicator dots and WhatsApp top bar with avatar and online status.
 * **What to Say**:
-  > *"Let's test the interactive features. On the catalog page, visitors can filter by breed or origin instantly without full page reloads. Clicking on a puppy brings us to their dedicated profile with photo carousels, inclusions, and the adoption roadmap.*  
+  > *"As we scroll down, you'll see the full suite of storybook animations from the original website:*  
   >  
-  > *Down here is the custom postal letterform enquiry component. When I enter my details and submit, it sends a payload to our Express backend, triggers celebratory confetti, and displays an immediate confirmation message."*
+  > *In Section 3, we have the interactive wooden fork signpost with the hand-crafted Dubai skyline on the left and the animated bobbing Korean flight with porthole puppy on the right.*  
+  >  
+  > *In Section 4, I built the interactive WhatsApp concierge simulator. Users can click through the journey steps—from breed selection chips, to real showroom video playback right inside the phone screen, to the animated transit route map to Dubai. Everything is responsive and interactive."*
 
 ---
 
-### 3. Project Structure & Technologies (01:30 – 02:30)
-* **What to Show on Screen**: Switch to VS Code and show the root directory with `frontend/` and `backend/`.
+### 3. The Mad-Libs Stationery Contact Letter & Postal Animation (01:45 – 02:45)
+* **What to Show on Screen**:
+  1. Scroll down to the contact section (or go to `/contact`).
+  2. Point out the Mad-Libs style handwritten stationery letter on ruled paper with red ledger line and sitting Teddy mascot SVG beside it.
+  3. Fill in your name, phone number, and choose a puppy from the dropdown.
+  4. Click **"Post my letter"**.
+  5. Watch the 3-step animation:
+     * The letter folds up.
+     * The postal envelope slides in and seals.
+     * The mailbox pops up, the envelope drops in, and the yellow postal flag flips up!
+     * Celebratory confetti triggers and the success status card appears with direct WhatsApp CTA.
+  6. Show Network tab showing `POST /api/enquiries` returning `201 Created`.
 * **What to Say**:
-  > *"Per the assignment requirements, I cleanly decoupled the application into two independent directories:*  
+  > *"Next is the signature contact experience. Rather than a generic contact form, this is an exact clone of the Mad-Libs handwritten stationery letter with ruled notebook lines, red ledger margin, and the sitting Teddy mascot.*  
   >  
-  > *In `frontend/`, I used Next.js App Router with React 19, TypeScript, and Tailwind CSS. We have our custom Google Fonts—Fraunces for luxury headings, Figtree for clean readability, and Shantell Sans for the handwritten notes. I implemented `generateStaticParams()` across all 42 individual puppy routes, ensuring fast static pre-rendering and optimal SEO.*  
-  >  
-  > *In `backend/`, I created a dedicated Node.js and Express REST API in TypeScript. It follows the MVC pattern with separated routes, controllers, and data storage for puppies, enquiries, testimonials, and FAQs. It includes security headers via Helmet, CORS configuration, and a honeypot field on the enquiry endpoint to protect against spam bots."*
+  > *When I submit my letter, watch the multi-phase animation sequence: the letter folds, the envelope seals with wax, the mailbox pops up from the bottom, the letter posts into the slot, and the yellow flag flips up! The enquiry is dispatched to our backend API, followed by celebratory confetti and an immediate WhatsApp connection."*
 
 ---
 
-### 4. AI Tools Used & Prompts Provided (02:30 – 03:30)
-* **What to Show on Screen**: Show the `README.md` section titled *"AI Tools Policy & Prompts Disclosure"*.
+### 4. Project Structure & Separation of Concerns (02:45 – 03:45)
+* **What to Show on Screen**: Switch to VS Code and show the decoupled `frontend/` and `backend/` folders.
 * **What to Say**:
-  > *"Regarding the AI Tools Policy: I used Google Antigravity as an AI pair-programming assistant to accelerate development.*  
+  > *"Per the assignment requirements, I cleanly decoupled the project into two independent directories:*  
   >  
-  > *My approach was deliberate and structured:*  
-  > *First, I prompted the agent to crawl the live reference website to inspect its asset structure, CSS tokens, and font families.*  
-  > *Second, I wrote targeted prompts to scrape and structure the 42 puppy profiles and media assets into clean JSON datasets for our backend.*  
-  > *Third, I directed the agent to scaffold the Express backend routes with honeypot validation, followed by the Next.js App Router frontend components.*  
+  > *In `frontend/`, I used Next.js App Router with React 19, TypeScript, and Tailwind CSS. All 42 individual puppy pages are statically pre-rendered using `generateStaticParams()`, delivering instant sub-second page loads and 100% SEO scores. We have custom Google Fonts—Fraunces for luxury serif headings, Figtree for body readability, and Shantell Sans for handwritten scrawls.*  
   >  
-  > *Using AI allowed me to handle asset extraction and repetitive boilerplate rapidly, freeing up time to focus on pixel-perfect CSS replication, edge-case debugging, and robust architectural separation."*
+  > *In `backend/`, I created a dedicated Node.js and Express REST API in TypeScript following the MVC architecture. It features endpoints for puppies, enquiries, FAQs, and reviews, protected by Helmet, CORS, and honeypot anti-spam verification."*
 
 ---
 
-### 5. Implementation Decisions & Challenges (03:30 – 04:30)
-* **What to Show on Screen**: Show `frontend/src/app/puppies/[slug]/PuppyGallery.tsx` and `backend/src/utils/pathResolver.ts`.
+### 5. AI Tools & Exact Prompts Disclosure (03:45 – 04:30)
+* **What to Show on Screen**: Show the `README.md` or prompt documentation.
 * **What to Say**:
-  > *"I faced two key challenges during development:*  
+  > *"In accordance with the assignment's AI Tools Policy, I utilized AI coding assistants during development. My exact prompts included:*  
+  > 1. *'Analyze https://puppy.instabizweb.com/ thoroughly: extract all pages, metadata, styles, and animation keyframes.'*  
+  > 2. *'Scrape all 42 puppy listings with complete images, origins, and breeds into structured JSON.'*  
+  > 3. *'Implement the storybook blanket curtain intro with the running puppy SVG and staggered paw print animation.'*  
+  > 4. *'Recreate the exact Mad-Libs stationery letterform with the envelope folding and mailbox flag posting animations.'*  
+  > 5. *'Build the interactive WhatsApp concierge simulator with step toggling and video player.'*  
   >  
-  > *1. Custom Cursor Precision: To replicate the reference site's custom paw cursor faithfully without jitter on clickable elements, I mapped `/cursor/paw.svg` for default movement and `/cursor/paw-press.svg` for interactive states, complemented by a throttled mouse-trail canvas hook.*  
-  >  
-  > *2. Next.js 16 Static Generation & Resilience: Next.js 16 has strict rules for prerendering dynamic search parameters. I isolated the filtering logic into a client component wrapped in a Suspense boundary while pre-rendering all 42 puppy profile pages statically for instant loading.*  
-  >  
-  > *3. In addition, I built an offline fallback in the frontend's API client: it attempts live REST calls to the backend first, but if the backend is ever spinning up from cold storage, it seamlessly renders pre-seeded local data so the user never sees an error."*
+  > *I personally reviewed, debugged, and architected every component, ensuring complete code ownership and zero build warnings."*
 
 ---
 
-### 6. Testing, Deployment & Closing (04:30 – 05:15)
-* **What to Show on Screen**: Show terminal running clean build (`npm run build`) and the GitHub repository / live deployment link.
+### 6. Challenges Overcome & Deployment (04:30 – 05:30)
 * **What to Say**:
-  > *"Both frontend and backend are thoroughly tested with zero build errors and zero TypeScript warnings.*  
+  > *"Some of the key technical challenges I solved included:*  
+  > 1. *Reverse-engineering the complex multi-phase CSS animations (`tp-letter-fold`, `tp-env-post`, `tp-box-up`, `tp-flag`) and synchronizing their keyframes with React state transitions.*  
+  > 2. *Optimizing Next.js 16 Turbopack build pipelines with Tailwind v4 `@theme inline` tokens and ensuring parent containers of `<Image fill>` strictly comply with non-static positioning.*  
+  > 3. *Building an offline-first resilient client SDK in `frontend/src/lib/api.ts` that tries live REST endpoints and gracefully falls back to pre-seeded static data so the website never breaks even if backend network delays occur.*  
   >  
-  > *For deployment, the frontend is deployed to Vercel connected to our GitHub repository with edge caching and SSL, and the backend is deployed on Render.*  
+  > *Both `npm run build` in the frontend and backend pass with 0 errors. The frontend is deployed to Vercel and the backend to Render, with the full source code published on GitHub.*  
   >  
-  > *Thank you for reviewing my technical assignment! I really enjoyed building this clone and look forward to discussing my submission with you in the technical interview. Have a great day!"*
-
----
-
-## 📋 Checklist Before Submitting
-
-1. [ ] Push all code to your GitHub repository:
-   ```bash
-   git add .
-   git commit -m "feat: complete TeddyPups full stack clone with separate frontend and backend"
-   git push origin main
-   ```
-2. [ ] Deploy `frontend/` to **Vercel** and get your Live URL.
-3. [ ] Deploy `backend/` to **Render** or **Railway** (or use local/serverless fallback).
-4. [ ] Record your Loom video using the script above (keep it under 6 minutes).
-5. [ ] Reply to Gaurav Teli's email with the exact subject line:
-   ```
-   Technical Assignment Submission – [Your Full Name] – Insta Biz Web
-   ```
-   And include:
-   * **Live Website URL**: `https://your-project.vercel.app`
-   * **GitHub Repository URL**: `https://github.com/your-username/teddypups-clone`
-   * **Loom Video URL**: `https://www.loom.com/share/...`
+  > *Thank you Gaurav and the Insta Biz Web team for this opportunity! I look forward to the next round."*

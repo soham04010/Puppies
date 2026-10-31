@@ -5,6 +5,8 @@ import { getFeaturedPuppies, getFaqs, getReviews } from '@/lib/api';
 import PuppyCard from '@/components/PuppyCard';
 import FAQAccordion from '@/components/FAQAccordion';
 import LetterForm from '@/components/LetterForm';
+import TwoWaysSection from '@/components/TwoWaysSection';
+import JourneySection from '@/components/JourneySection';
 import {
   MessageCircle,
   ShieldCheck,
@@ -125,127 +127,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. TWO WAYS TO MEET YOUR PUPPY */}
-      <section className="bg-[#fbf7ee] py-20 border-y border-[#ebd9c3]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="font-scrawl text-sm text-[#e5a84b] uppercase tracking-wider font-semibold">
-              Flexible & stress-free
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#4a3728] mt-1">
-              Two ways to meet your puppy
-            </h2>
-          </div>
+      {/* 3. TWO WAYS TO MEET YOUR PUPPY (Interactive Wooden Fork & Bobbing Flight) */}
+      <TwoWaysSection />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Card 1: Local Dubai */}
-            <div className="flex flex-col rounded-3xl border border-[#ebd9c3] bg-white p-8 lg:p-10 shadow-xs hover:shadow-md transition-shadow">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-[#fbf7ee] border border-[#ebd9c3] text-2xl mb-6">
-                🏙️
-              </div>
-              <h3 className="font-serif text-2xl font-bold text-[#4a3728]">
-                Puppies in Dubai
-              </h3>
-              <p className="font-scrawl text-sm text-[#e5a84b] mt-1">
-                Same-day adoption & local visits
-              </p>
-              <p className="mt-4 text-sm text-[#6a5340] leading-relaxed">
-                Step into our Downtown Dubai showroom and experience the joy of choosing your puppy face-to-face. Spend time bonding before making your decision, and take your puppy home the very same day.
-              </p>
-              <div className="mt-8 pt-6 border-t border-[#fbf7ee] flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#4a3728]">Immediate availability</span>
-                <Link
-                  href="/puppies?origin=local"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#4a3728] hover:text-[#e5a84b]"
-                >
-                  <span>Browse local pups</span>
-                  <ArrowRight className="size-3" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Card 2: International Import */}
-            <div className="flex flex-col rounded-3xl border border-[#ebd9c3] bg-white p-8 lg:p-10 shadow-xs hover:shadow-md transition-shadow">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-[#fbf7ee] border border-[#ebd9c3] text-2xl mb-6">
-                ✈️
-              </div>
-              <h3 className="font-serif text-2xl font-bold text-[#4a3728]">
-                Imported for you
-              </h3>
-              <p className="font-scrawl text-sm text-[#e5a84b] mt-1">
-                Rare Korean & European teacup lines
-              </p>
-              <p className="mt-4 text-sm text-[#6a5340] leading-relaxed">
-                Looking for a rare Korean teacup poodle, Maltipoo, or Pomeranian? Through our Order Upon Request service, we source from ethical, certified international breeders and handle all veterinary paperwork and VIP flight transport.
-              </p>
-              <div className="mt-8 pt-6 border-t border-[#fbf7ee] flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#4a3728]">Custom VIP Concierge</span>
-                <Link
-                  href="/puppies?origin=imported"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#4a3728] hover:text-[#e5a84b]"
-                >
-                  <span>Browse imported pups</span>
-                  <ArrowRight className="size-3" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. FOUR-STEP PUPPY JOURNEY */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="font-scrawl text-sm text-[#e5a84b] uppercase tracking-wider font-semibold">
-            Simple & Transparent
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#4a3728] mt-1">
-            Your puppy journey
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl bg-[#fffdf8] border border-[#ebd9c3]">
-            <span className="flex size-10 items-center justify-center rounded-full bg-[#4a3728] text-white font-serif font-bold text-sm mb-4">
-              1
-            </span>
-            <h4 className="font-serif text-lg font-bold text-[#4a3728]">Choose your breed</h4>
-            <p className="mt-2 text-xs text-[#6a5340] leading-relaxed">
-              Explore our catalogue of miniature teacup puppies or request a custom rare breed from Korea.
-            </p>
-          </div>
-
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl bg-[#fffdf8] border border-[#ebd9c3]">
-            <span className="flex size-10 items-center justify-center rounded-full bg-[#4a3728] text-white font-serif font-bold text-sm mb-4">
-              2
-            </span>
-            <h4 className="font-serif text-lg font-bold text-[#4a3728]">Get photos & details</h4>
-            <p className="mt-2 text-xs text-[#6a5340] leading-relaxed">
-              Receive genuine videos, health verification, and parents' pedigree records directly on WhatsApp.
-            </p>
-          </div>
-
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl bg-[#fffdf8] border border-[#ebd9c3]">
-            <span className="flex size-10 items-center justify-center rounded-full bg-[#4a3728] text-white font-serif font-bold text-sm mb-4">
-              3
-            </span>
-            <h4 className="font-serif text-lg font-bold text-[#4a3728]">Meet or direct delivery</h4>
-            <p className="mt-2 text-xs text-[#6a5340] leading-relaxed">
-              Visit our Downtown Dubai showroom in person, or enjoy white-glove climate-controlled doorstep delivery.
-            </p>
-          </div>
-
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl bg-[#fffdf8] border border-[#ebd9c3]">
-            <span className="flex size-10 items-center justify-center rounded-full bg-[#4a3728] text-white font-serif font-bold text-sm mb-4">
-              4
-            </span>
-            <h4 className="font-serif text-lg font-bold text-[#4a3728]">24/7 Welcome care</h4>
-            <p className="mt-2 text-xs text-[#6a5340] leading-relaxed">
-              Our care team supports you around the clock with training, nutrition, and settling advice.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* 4. FOUR-STEP PUPPY JOURNEY (Interactive WhatsApp Phone Simulator) */}
+      <JourneySection />
 
       {/* 5. HAPPY FAMILIES TESTIMONIALS */}
       <section className="bg-[#fbf7ee] py-20 border-y border-[#ebd9c3]">

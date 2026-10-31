@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import PawTrail from '@/components/PawTrail';
+import IntroCurtain from '@/components/IntroCurtain';
+import ScrollObserver from '@/components/ScrollObserver';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -107,7 +109,9 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-screen flex-col bg-[#fffdf8] text-[#4a3728]">
+        <IntroCurtain />
         <PawTrail />
+        <ScrollObserver />
         <Navbar />
         <main id="main" className="flex-1">
           {children}
