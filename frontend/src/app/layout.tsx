@@ -4,9 +4,11 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
-import PawTrail from '@/components/PawTrail';
+import PawTrailCanvas from '@/components/PawTrailCanvas';
 import IntroCurtain from '@/components/IntroCurtain';
 import ScrollObserver from '@/components/ScrollObserver';
+import SmoothScroll from '@/components/SmoothScroll';
+import PupRunner from '@/components/PupRunner';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -109,8 +111,10 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-screen flex-col bg-[#fffdf8] text-[#4a3728]">
+        <SmoothScroll />
         <IntroCurtain />
-        <PawTrail />
+        <PawTrailCanvas />
+        <PupRunner />
         <ScrollObserver />
         <Navbar />
         <main id="main" className="flex-1">

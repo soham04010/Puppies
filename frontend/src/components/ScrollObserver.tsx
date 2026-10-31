@@ -4,29 +4,90 @@ import { useEffect } from "react";
 
 export default function ScrollObserver() {
   useEffect(() => {
-    // 1. IntersectionObserver for scroll-driven reveals
+    const unrevealedElements = new Set<Element>();
+
+    const isCurtainDown = () => {
+      const curtain = document.querySelector(".tp-curtain");
+      if (!curtain) return false;
+      const state = (curtain as HTMLElement).dataset.state;
+      return (
+        state === "intro" ||
+        state === "covering" ||
+        state === "covered" ||
+        state === "snap"
+      );
+    };
+
+    const reveal = (el: Element) => {
+      const htmlEl = el as HTMLElement;
+      htmlEl.dataset.revealed = "true";
+      htmlEl.classList.add("is-revealed");
+      observer.unobserve(el);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
-            entry.target.setAttribute("data-revealed", "true");
+          if (!entry.isIntersecting) return;
+          const target = entry.target as HTMLElement;
+          if (isCurtainDown()) {
+            unrevealedElements.add(target);
+          } else {
+            reveal(target);
           }
         });
       },
       {
-        threshold: 0.12,
-        rootMargin: "0px 0px -40px 0px"
+        threshold: 0.08,
+        rootMargin: "0px 0px -6% 0px",
       }
     );
 
-    // Target sections and animatable cards
-    const targets = document.querySelectorAll(
-      ".tp-scene, .tp-way, .tp-chat, .tp-post, .tp-letterform, .tp-door, .tp-polaroid, .tp-window, .tp-flight, [data-pup-scene]"
-    );
-    targets.forEach((el) => observer.observe(el));
+    const observeEl = (el: Element) => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.dataset.armed) {
+        observer.observe(htmlEl);
+        return;
+      }
+      const rect = htmlEl.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0 && !isCurtainDown()) {
+        htmlEl.dataset.revealed = "true";
+        htmlEl.classList.add("is-revealed");
+        return;
+      }
+      htmlEl.dataset.armed = "true";
+      observer.observe(htmlEl);
+    };
 
-    // 2. Parallax tilt & look effect for [data-pup-look] elements
+    // Find all reveal targets across the page
+    const registerTargets = () => {
+      document
+        .querySelectorAll(
+          "[data-reveal]:not([data-revealed]), .tp-scene, .tp-way, .tp-chat, .tp-post, .tp-letterform, .tp-door, .tp-polaroid, .tp-window, .tp-flight, [data-pup-scene]"
+        )
+        .forEach(observeEl);
+    };
+
+    registerTargets();
+
+    const mutationObserver = new MutationObserver(() => {
+      registerTargets();
+    });
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    const onCurtainLifted = () => {
+      unrevealedElements.forEach(reveal);
+      unrevealedElements.clear();
+    };
+
+    window.addEventListener("tp:arrived", onCurtainLifted);
+    const fallbackTimer = setTimeout(onCurtainLifted, 1500);
+
+    // Parallax pupil/mascot tracking
     const handleMouseMove = (e: MouseEvent) => {
       const lookers = document.querySelectorAll<HTMLElement>("[data-pup-look='true']");
       const mouseX = e.clientX / window.innerWidth - 0.5;
@@ -43,7 +104,10 @@ export default function ScrollObserver() {
 
     return () => {
       observer.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener("tp:arrived", onCurtainLifted);
       window.removeEventListener("mousemove", handleMouseMove);
+      clearTimeout(fallbackTimer);
     };
   }, []);
 

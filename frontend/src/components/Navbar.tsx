@@ -1,177 +1,208 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { MessageCircle, Menu, X, Phone, Heart } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/puppies', label: 'Puppies' },
-  { href: '/happy-families', label: 'Happy families' },
-  { href: '/how-it-works', label: 'How it works' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/contact', label: 'Visit & contact' }
+const PAW_PATH =
+  "M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z";
+
+const NAV_ITEMS = [
+  { href: "/", label: "Home" },
+  { href: "/puppies", label: "Puppies" },
+  { href: "/happy-families", label: "Happy families" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Visit & contact" },
 ];
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const isHome = pathname === "/";
+  const headerRef = useRef<HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState<string>(pathname);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    setActiveHref(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    let prevY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      const curY = window.scrollY;
+      header.dataset.scrolled = curY > 8 ? "true" : "false";
+
+      if (Math.abs(curY - prevY) > 6) {
+        header.dataset.hidden = curY > prevY && curY > 220 ? "true" : "false";
+        prevY = curY;
+      }
+      ticking = false;
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const requestTick = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(onScroll);
+      }
+    };
+
+    const onFocusIn = () => {
+      header.dataset.hidden = "false";
+    };
+
+    onScroll();
+    window.addEventListener("scroll", requestTick, { passive: true });
+    header.addEventListener("focusin", onFocusIn);
+
+    return () => {
+      window.removeEventListener("scroll", requestTick);
+      header.removeEventListener("focusin", onFocusIn);
+    };
   }, []);
 
-  // Close mobile menu on route change
+  // Section spy on homepage
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+    if (!isHome) return;
+
+    const handleSpy = () => {
+      const sections = [
+        { id: "hero", href: "/" },
+        { id: "meet", href: "/puppies" },
+        { id: "paths", href: "/how-it-works" },
+        { id: "chat", href: "/how-it-works" },
+        { id: "dusk", href: "/happy-families" },
+        { id: "questions", href: "/faq" },
+        { id: "cta", href: "/contact" },
+      ];
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i].id) || document.querySelector(`[data-section="${sections[i].id}"]`);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 260) {
+            setActiveHref(sections[i].href);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleSpy, { passive: true });
+    return () => window.removeEventListener("scroll", handleSpy);
+  }, [isHome]);
 
   return (
     <>
-      {/* Top Banner */}
-      <div className="bg-[#4a3728] py-1.5 text-center text-xs tracking-wider text-[#fffdf8]">
-        <p className="flex items-center justify-center gap-1.5 font-medium">
-          <Heart className="size-3 fill-[#f2be6b] text-[#f2be6b]" />
-          <span>every puppy is family</span>
-          <Heart className="size-3 fill-[#f2be6b] text-[#f2be6b]" />
-        </p>
-      </div>
-
-      {/* Main Navigation */}
       <header
-        className={`sticky top-0 z-40 w-full transition-all duration-300 ${
-          scrolled ? 'bg-[#fffdf8]/95 shadow-sm backdrop-blur-md' : 'bg-[#fffdf8]'
-        } border-b border-[#ebd9c3]`}
+        ref={headerRef}
+        id="site-header"
+        data-scrolled="false"
+        data-hidden="false"
+        data-home={isHome ? "true" : undefined}
+        className="tp-header fixed inset-x-0 top-0 z-50"
       >
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div
-              className="relative h-12 w-12 overflow-hidden rounded-full border border-[#ebd9c3] bg-white shadow-xs transition-transform group-hover:scale-105"
-              style={{ position: 'relative' }}
-            >
-              <Image
-                src="/brand/logo.png"
-                alt="TeddyPups U.A.E. Logo"
-                fill
-                sizes="48px"
-                className="object-contain p-1"
-                priority
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-serif text-xl font-bold tracking-tight text-[#4a3728]">
-                TeddyPups
-              </span>
-              <span className="text-[10px] tracking-widest uppercase text-[#6a5340]">
-                U.A.E. • Dubai
-              </span>
-            </div>
+        <div className="tp-header__bar gutter">
+          <Link className="tp-header__brand" aria-label="TeddyPups U.A.E. — home" href="/">
+            <Image
+              alt="TeddyPups"
+              width={56}
+              height={56}
+              className="tp-header__logo"
+              src="/brand/logo.png"
+              priority
+            />
+            <span className="font-plush tp-header__name">TeddyPups</span>
           </Link>
 
-          {/* Desktop Links */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map(link => {
-              const active = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-sm font-medium transition-colors hover:text-[#e5a84b] relative py-1 ${
-                    active ? 'text-[#4a3728] font-semibold' : 'text-[#6a5340]'
-                  }`}
-                >
-                  {link.label}
-                  {active && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#f2be6b]" />
-                  )}
-                </Link>
-              );
-            })}
+          <nav aria-label="Main" className="tp-header__nav">
+            <ul>
+              {NAV_ITEMS.map((item) => {
+                const isActive = activeHref === item.href;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      data-active={isActive ? "true" : "false"}
+                      className="tp-nav-link"
+                    >
+                      <span>{item.label}</span>
+                      <svg viewBox="0 0 64 64" className="tp-nav-link__paw" aria-hidden="true" fill="currentColor">
+                        <path d={PAW_PATH} />
+                      </svg>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="tp-header__actions">
             <a
+              className="btn btn-whatsapp"
               href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20love%20to%20know%20more%20about%20your%20puppies."
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#4a3728] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#fffdf8] shadow-sm transition-all hover:bg-[#6a5340] hover:shadow-md active:scale-95"
             >
-              <MessageCircle className="size-4 text-[#f2be6b]" />
-              <span>WhatsApp us</span>
+              WhatsApp us
             </a>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex md:hidden items-center justify-center rounded-xl border border-[#ebd9c3] p-2 text-[#4a3728] hover:bg-[#fbf7ee]"
-            aria-label="Toggle Navigation Menu"
-          >
-            {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-          </button>
-        </div>
-      </header>
-
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[#fffdf8] px-6 py-6 md:hidden">
-          <div className="flex items-center justify-between border-b border-[#ebd9c3] pb-4">
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-lg font-bold text-[#4a3728]">TeddyPups</span>
-              <span className="text-xs text-[#6a5340] italic font-scrawl">where to, friend?</span>
-            </div>
             <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-full border border-[#ebd9c3] p-2 text-[#4a3728] hover:bg-[#fbf7ee]"
-              aria-label="Close menu"
+              type="button"
+              className="tp-burger"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
             >
-              <X className="size-5" />
+              <span className="tp-burger__bun tp-burger__bun--top"></span>
+              <span className="tp-burger__bun tp-burger__bun--mid"></span>
+              <span className="tp-burger__bun tp-burger__bun--bot"></span>
             </button>
           </div>
+        </div>
 
-          <div className="flex flex-col gap-5 py-8">
-            {navLinks.map(link => {
-              const active = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-xl font-serif transition-colors ${
-                    active ? 'font-bold text-[#4a3728]' : 'text-[#6a5340]'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+        {/* Scalloped hem SVG border that appears on scroll */}
+        <svg className="tp-header__hem" width="100%" height="24" preserveAspectRatio="none">
+          <defs>
+            <pattern id="tp-hem" width="48" height="24" patternUnits="userSpaceOnUse">
+              <path d="M0 0v14a24 10 0 0 0 48 0V0Z" className="tp-header__hem-fill"></path>
+              <path d="M0 14a24 10 0 0 0 48 0" className="tp-header__hem-line"></path>
+            </pattern>
+          </defs>
+          <rect width="100%" height="24" fill="url(#tp-hem)"></rect>
+        </svg>
+      </header>
 
-          <div className="mt-auto border-t border-[#ebd9c3] pt-6 flex flex-col gap-3">
+      {/* Mobile Drawer */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 flex flex-col bg-[#fffdf8] p-6 pt-24 md:hidden">
+          <nav className="flex flex-col gap-6 text-xl font-bold font-serif text-[#4a3728]">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#c2622b] transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-8 border-t border-[#ebd9c3] pt-6">
             <a
-              href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20love%20to%20know%20more%20about%20your%20puppies."
+              href="https://wa.me/971541676733"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-full bg-[#4a3728] py-3 text-sm font-semibold text-[#fffdf8]"
+              className="btn btn-primary w-full text-center"
             >
-              <MessageCircle className="size-4 text-[#f2be6b]" />
-              <span>WhatsApp: +971 54 167 6733</span>
-            </a>
-            <a
-              href="tel:+971541676733"
-              className="flex items-center justify-center gap-2 rounded-full border border-[#ebd9c3] bg-white py-3 text-sm font-semibold text-[#4a3728]"
-            >
-              <Phone className="size-4" />
-              <span>Call Showroom</span>
+              WhatsApp us
             </a>
           </div>
         </div>
