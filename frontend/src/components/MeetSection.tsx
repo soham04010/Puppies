@@ -400,17 +400,20 @@ export default function MeetSection() {
             <div aria-hidden="true" className="tp-meet__floor"></div>
 
             {/* Authentic Animated Mascot Puppy on Treadmill */}
-            <PupBuddy
-              pose={isPinned ? "walk" : "sit"}
-              act={isPinned ? "treadmill" : undefined}
-              facing="right"
-              className="tp-meet__teddy"
-              strideSpeed={1.2}
-              style={{
-                bottom: "calc(var(--floor-h) - 8px)",
-                zIndex: 20,
-              }}
-            />
+            <div
+              data-pup-stop="true"
+              data-pose="sit"
+              data-facing="right"
+              data-act="treadmill"
+              className="pup-stop tp-meet__teddy"
+            >
+              <PupBuddy
+                pose="sit"
+                act="treadmill"
+                facing="right"
+                asStop={true}
+              />
+            </div>
           </div>
         </div>
       </div>

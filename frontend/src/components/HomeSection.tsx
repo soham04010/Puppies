@@ -56,11 +56,18 @@ export default function HomeSection() {
         <span aria-hidden="true" className="tp-house__mat font-scrawl">welcome home</span>
 
         {/* Authentic Mascot Bowing on Mat */}
-        <PupBuddy
-          pose="sit"
-          facing="right"
+        <div
+          data-pup-stop="true"
+          data-pose="bow"
+          data-facing="right"
           className="pup-stop tp-house__teddy"
-        />
+        >
+          <PupBuddy
+            pose="bow"
+            facing="right"
+            asStop={true}
+          />
+        </div>
       </div>
 
       <div className="tp-home__actions gutter">

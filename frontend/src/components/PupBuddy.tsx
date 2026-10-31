@@ -94,15 +94,16 @@ const LEGS = {
 };
 
 interface PupBuddyProps {
-  pose?: "sit" | "walk" | "stand" | "peek" | "happy" | "bow";
+  pose?: "sit" | "walk" | "stand" | "peek" | "happy" | "bow" | "snug";
   facing?: "left" | "right";
-  act?: "treadmill" | "tilt";
+  act?: "treadmill" | "tilt" | "basket";
   className?: string;
   style?: React.CSSProperties;
   label?: string;
   strideSpeed?: number;
   walkProgress?: number;
   isWalking?: boolean;
+  asStop?: boolean;
 }
 
 export default function PupBuddy({
@@ -115,6 +116,7 @@ export default function PupBuddy({
   strideSpeed = 1,
   walkProgress,
   isWalking: propIsWalking,
+  asStop = false,
 }: PupBuddyProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState(0);

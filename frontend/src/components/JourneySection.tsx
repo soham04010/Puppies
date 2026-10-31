@@ -283,11 +283,18 @@ export default function JourneySection() {
           </div>
 
           {/* Authentic Mascot Sitting by WhatsApp */}
-          <PupBuddy
-            pose="sit"
-            facing="right"
+          <div
+            data-pup-stop="true"
+            data-pose="sit"
+            data-facing="right"
             className="pup-stop tp-chat__teddy"
-          />
+          >
+            <PupBuddy
+              pose="sit"
+              facing="right"
+              asStop={true}
+            />
+          </div>
         </div>
       </div>
     </section>

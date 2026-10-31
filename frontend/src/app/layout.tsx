@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import PawTrailCanvas from '@/components/PawTrailCanvas';
 import IntroCurtain from '@/components/IntroCurtain';
+import PupJourney from '@/components/PupJourney';
 import ScrollObserver from '@/components/ScrollObserver';
 import SmoothScroll from '@/components/SmoothScroll';
 
@@ -113,6 +114,7 @@ export default function RootLayout({
         <SmoothScroll />
         <IntroCurtain />
         <PawTrailCanvas />
+        <PupJourney />
         <ScrollObserver />
         <Navbar />
         <main id="main" tabIndex={-1} className="flex-1 relative pt-[var(--header-h)] outline-none">

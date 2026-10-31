@@ -165,11 +165,18 @@ export default function DuskSection() {
             </Link>
 
             {/* Authentic Mascot Sitting at Dusk */}
-            <PupBuddy
-              pose="sit"
-              facing="right"
+            <div
+              data-pup-stop="true"
+              data-pose="sit"
+              data-facing="right"
               className="pup-stop tp-dusk__teddy"
-            />
+            >
+              <PupBuddy
+                pose="sit"
+                facing="right"
+                asStop={true}
+              />
+            </div>
           </div>
         </div>
         <div aria-hidden="true" className="tp-street__pavement"></div>

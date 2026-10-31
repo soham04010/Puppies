@@ -132,11 +132,18 @@ export default function TwoWaysSection() {
           </article>
 
           {/* Authentic Mascot Puppy at Fork */}
-          <PupBuddy
-            pose="sit"
-            facing="right"
-            className="tp-fork__teddy"
-          />
+          <div
+            data-pup-stop="true"
+            data-pose="sit"
+            data-facing="right"
+            className="pup-stop tp-fork__teddy"
+          >
+            <PupBuddy
+              pose="sit"
+              facing="right"
+              asStop={true}
+            />
+          </div>
         </div>
       </div>
     </section>
