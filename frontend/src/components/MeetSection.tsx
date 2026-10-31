@@ -1,11 +1,440 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+interface FeaturedPup {
+  id: string;
+  slug: string;
+  name: string;
+  breed: string;
+  gender: string;
+  age: string;
+  hasVideo: boolean;
+  image: string;
+}
+
+const FEATURED_PUPS: FeaturedPup[] = [
+  {
+    id: "maltipoo-max-male",
+    slug: "maltipoo-max-male",
+    name: "Max",
+    breed: "Maltipoo",
+    gender: "boy",
+    age: "3 months",
+    hasVideo: true,
+    image: "/media/Z0ToauDx7Eve/5fffe4d022/b942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp",
+  },
+  {
+    id: "korean-teacup-maltipoo-female",
+    slug: "korean-teacup-maltipoo-female",
+    name: "Korean Teacup Maltipoo",
+    breed: "Korean Teacup Maltipoo",
+    gender: "girl",
+    age: "2 months",
+    hasVideo: true,
+    image: "/media/gAaGwoGej2g6/5523e884dd/b942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg",
+  },
+  {
+    id: "korean-teacup-poodle-female",
+    slug: "korean-teacup-poodle-female",
+    name: "Korean Teacup Poodle",
+    breed: "Korean Teacup Poodle",
+    gender: "girl",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/xeMJCapr5vcU/e618c653b2/b942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg",
+  },
+  {
+    id: "maltipoo-cavapoo-male",
+    slug: "maltipoo-cavapoo-male",
+    name: "Maltipoo & Cavapoo",
+    breed: "Maltipoo & Cavapoo",
+    gender: "boy",
+    age: "3 months Maltipoo & 2 months Cavapoo",
+    hasVideo: true,
+    image: "/media/YQhey4j7uWvZ/3ea10db6c1/b942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg",
+  },
+  {
+    id: "toy-poodle-male-female",
+    slug: "toy-poodle-male-female",
+    name: "Toy Poodle",
+    breed: "Toy Poodle",
+    gender: "boy & girl",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/vMu0BPvkAZ-j/c65e53967d/b942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg",
+  },
+  {
+    id: "maltipoo-female-2",
+    slug: "maltipoo-female-2",
+    name: "Maltipoo",
+    breed: "Maltipoo",
+    gender: "girl",
+    age: "3 months",
+    hasVideo: true,
+    image: "/media/3WJNmn6VVgVu/732f779474/b942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg",
+  },
+  {
+    id: "pomeranian-female",
+    slug: "pomeranian-female",
+    name: "Pomeranian",
+    breed: "Pomeranian",
+    gender: "girl",
+    age: "3 months",
+    hasVideo: false,
+    image: "/media/3yOfnmoyPooH/81e0c7e00c/b942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg",
+  },
+  {
+    id: "copper-male",
+    slug: "copper-male",
+    name: "Copper",
+    breed: "Cavapoo",
+    gender: "boy",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/O-6w4FYqE10j/be76f399cc/b942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg",
+  },
+  {
+    id: "shitzu-female",
+    slug: "shitzu-female",
+    name: "Shih Tzu",
+    breed: "Shih Tzu",
+    gender: "girl",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/qNrTCSrsYyzY/168fa8c4ff/b942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg",
+  },
+  {
+    id: "shitzu-male",
+    slug: "shitzu-male",
+    name: "Shih Tzu",
+    breed: "Shih Tzu",
+    gender: "boy",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/crgs9ih6as_M/e37bafb1bf/b942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg",
+  },
+  {
+    id: "maltipoo-female-1",
+    slug: "maltipoo-female-1",
+    name: "Maltipoo",
+    breed: "Maltipoo",
+    gender: "girl",
+    age: "2.5 months",
+    hasVideo: false,
+    image: "/media/wNm2_VIBEQvK/4b68f59e75/b942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg",
+  },
+  {
+    id: "maltipoo-female",
+    slug: "maltipoo-female",
+    name: "Maltipoo",
+    breed: "Maltipoo",
+    gender: "girl",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/lMhASnmIIVQ4/ad2353ad31/b942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg",
+  },
+  {
+    id: "korean-teacup-pomeranian-1",
+    slug: "korean-teacup-pomeranian-1",
+    name: "Korean Teacup Pomeranian",
+    breed: "Korean Teacup Pomeranian",
+    gender: "girl",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/EsAq2LSRvVCJ/4d553ed044/b942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg",
+  },
+  {
+    id: "korean-teacup-pomeranian",
+    slug: "korean-teacup-pomeranian",
+    name: "Korean Teacup Pomeranian",
+    breed: "Korean Teacup Pomeranian",
+    gender: "girl",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/vzf7P8SPCZ-Q/a8db4ee114/b942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg",
+  },
+  {
+    id: "korean-teacup-pomeranian-male",
+    slug: "korean-teacup-pomeranian-male",
+    name: "Korean Teacup Pomeranian",
+    breed: "Korean Teacup Pomeranian",
+    gender: "boy",
+    age: "2 months",
+    hasVideo: false,
+    image: "/media/nZTGFv46hrZI/fb9eeefc9c/b942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg",
+  },
+];
+
+const DOOR_COLORS = ["#a24a1a", "#5a3a28", "#d4893f", "#b8644a", "#7a4a2e"];
+
+const PAW_PATH =
+  "M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z";
+
 export default function MeetSection() {
+  const pinRangeRef = useRef<HTMLDivElement>(null);
+  const hallRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLOListElement>(null);
+
+  const [isPinned, setIsPinned] = useState(false);
+  const [maxScrollX, setMaxScrollX] = useState(0);
+
+  // Resize and dynamic door-w calculation matching reference site
+  useEffect(() => {
+    const updateDimensions = () => {
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const pinned = isDesktop && !prefersReduced;
+      setIsPinned(pinned);
+
+      const track = trackRef.current;
+      const hall = hallRef.current;
+
+      if (pinned && track && hall) {
+        const stage = hall.parentElement;
+        if (stage) {
+          const head = stage.querySelector(".tp-meet__head") as HTMLElement | null;
+          const plates = Array.from(track.querySelectorAll(".tp-door__plate")) as HTMLElement[];
+          const plateH = Math.max(64, ...plates.map((p) => p.offsetHeight || 64));
+          const floorH = (hall.querySelector(".tp-meet__floor") as HTMLElement | null)?.offsetHeight ?? 0;
+          const headH = head ? head.offsetTop + head.offsetHeight : 0;
+          const doorW = Math.max(
+            128,
+            Math.min(
+              256,
+              0.15 * window.innerWidth,
+              (stage.clientHeight - headH - floorH - plateH - 40) / 1.3
+            )
+          );
+          hall.style.setProperty("--door-w", `${doorW.toFixed(0)}px`);
+        }
+        setMaxScrollX(Math.max(0, track.scrollWidth - window.innerWidth + 200));
+      } else {
+        hall?.style.removeProperty("--door-w");
+        setMaxScrollX(0);
+      }
+    };
+
+    updateDimensions();
+
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    if (trackRef.current) resizeObserver.observe(trackRef.current);
+    if (hallRef.current?.parentElement) resizeObserver.observe(hallRef.current.parentElement);
+
+    window.addEventListener("resize", updateDimensions);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateDimensions);
+    };
+  }, []);
+
+  // Smooth scroll sync: tracks scroll position inside the pinned range and translates the track
+  useEffect(() => {
+    if (!isPinned) return;
+
+    let targetX = 0;
+    let currentX = 0;
+    let animFrame: number;
+
+    const onScroll = () => {
+      const pinRange = pinRangeRef.current;
+      if (!pinRange) return;
+
+      const rect = pinRange.getBoundingClientRect();
+      const scrollDist = pinRange.offsetHeight - window.innerHeight;
+      if (scrollDist <= 0) return;
+
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollDist));
+      targetX = -progress * maxScrollX;
+    };
+
+    const render = () => {
+      // Smooth lerp (interpolation) for silky inertia feel
+      currentX += (targetX - currentX) * 0.18;
+
+      const track = trackRef.current;
+      const hall = hallRef.current;
+
+      if (track) {
+        track.style.transform = `translateX(${currentX.toFixed(2)}px)`;
+
+        // Calculate 3D door opening state as doors cross center viewport
+        const threshold = 0.38 * window.innerWidth;
+        const doors = Array.from(track.children) as HTMLElement[];
+        for (const door of doors) {
+          if (door.classList.contains("tp-door--all")) continue;
+          const doorLeft = door.offsetLeft + currentX;
+          const isOpen = doorLeft < threshold;
+          if (door.dataset.open !== String(isOpen)) {
+            door.dataset.open = String(isOpen);
+          }
+        }
+      }
+
+      if (hall) {
+        hall.style.setProperty("--floor-x", `${currentX.toFixed(1)}px`);
+      }
+
+      animFrame = requestAnimationFrame(render);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    animFrame = requestAnimationFrame(render);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(animFrame);
+    };
+  }, [isPinned, maxScrollX]);
+
   return (
-    <section data-pup-scene="true" data-tone="light" className="tp-scene tp-meet" style={{ "--sky-top": "#fff1d8", "--sky-bottom": "#fbe3b4" } as React.CSSProperties} aria-labelledby="meet-title"><div data-pin-range="true" style={{ "--pinned": "0" } as React.CSSProperties}><div className="tp-meet__stage"><header className="tp-meet__head gutter"><div><h2 id="meet-title" className="font-plush text-huge">Meet the pups</h2><p className="text-lede mt-3 max-w-[44ch] text-[var(--ink-soft)]">Real puppies, real photos, looking for their families right now.</p></div><a className="btn btn-primary shrink-0" href="/puppies">See all available puppies</a></header><div className="tp-meet__hall"><ol className="tp-meet__track" data-treadmill="true" aria-label="Puppies looking for a family"><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#a24a1a" } as React.CSSProperties} href="/puppies/maltipoo-max-male"><span className="tp-door__plate"><span className="font-plush tp-door__name">Max</span><span className="tp-door__meta">Maltipoo, boy, 3 months, with video</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Max, male Maltipoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FZ0ToauDx7Eve%2F5fffe4d022%2Fb942a5_4b8cfb8204d24eadaf524332aba1dc15-mv2.webp&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#5a3a28" } as React.CSSProperties} href="/puppies/korean-teacup-maltipoo-female"><span className="tp-door__plate"><span className="font-plush tp-door__name">Korean Teacup Maltipoo</span><span className="tp-door__meta">girl, 2 months, with video</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Korean Teacup Maltipoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FgAaGwoGej2g6%2F5523e884dd%2Fb942a5_50f0ae67c9ff437d911597d52a9e63b3-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#d4893f" } as React.CSSProperties} href="/puppies/korean-teacup-poodle-female"><span className="tp-door__plate"><span className="font-plush tp-door__name">Korean Teacup Poodle</span><span className="tp-door__meta">girl, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Korean Teacup Poodle puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FxeMJCapr5vcU%2Fe618c653b2%2Fb942a5_14376a216177484dbbb27995d0f6aeb7-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#b8644a" } as React.CSSProperties} href="/puppies/maltipoo-cavapoo-male"><span className="tp-door__plate"><span className="font-plush tp-door__name">Maltipoo &amp; Cavapoo</span><span className="tp-door__meta">boy, 3 months Maltipoo &amp; 2 months Cavapoo, with video</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Male Maltipoo &amp; Cavapoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FYQhey4j7uWvZ%2F3ea10db6c1%2Fb942a5_7ce7e7bd18424b6c8fb16dd30113ade2-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#7a4a2e" } as React.CSSProperties} href="/puppies/toy-poodle-male-female"><span className="tp-door__plate"><span className="font-plush tp-door__name">Toy Poodle</span><span className="tp-door__meta">boy &amp; girl, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Toy Poodle puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FvMu0BPvkAZ-j%2Fc65e53967d%2Fb942a5_0b2c0c0d178c4005acbe28725a5ea573-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#a24a1a" } as React.CSSProperties} href="/puppies/maltipoo-female-2"><span className="tp-door__plate"><span className="font-plush tp-door__name">Maltipoo</span><span className="tp-door__meta">girl, 3 months, with video</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Maltipoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2F3WJNmn6VVgVu%2F732f779474%2Fb942a5_2b5dcece361b4589890ae920c66a1b70-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#5a3a28" } as React.CSSProperties} href="/puppies/pomeranian-female"><span className="tp-door__plate"><span className="font-plush tp-door__name">Pomeranian</span><span className="tp-door__meta">girl, 3 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Pomeranian puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2F3yOfnmoyPooH%2F81e0c7e00c%2Fb942a5_556841b9a73942e5a9d782a683f3bc68-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#d4893f" } as React.CSSProperties} href="/puppies/copper-male"><span className="tp-door__plate"><span className="font-plush tp-door__name">Copper</span><span className="tp-door__meta">Cavapoo, boy, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Copper, male Cavapoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FO-6w4FYqE10j%2Fbe76f399cc%2Fb942a5_bb73ebbb952047988f944f3a8e3052bd-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#b8644a" } as React.CSSProperties} href="/puppies/shitzu-female"><span className="tp-door__plate"><span className="font-plush tp-door__name">Shih Tzu</span><span className="tp-door__meta">girl, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Shih Tzu puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FqNrTCSrsYyzY%2F168fa8c4ff%2Fb942a5_eb14616c76c24da89afe7fa3b7d7ae6a-mv2.jpeg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#7a4a2e" } as React.CSSProperties} href="/puppies/shitzu-male"><span className="tp-door__plate"><span className="font-plush tp-door__name">Shih Tzu</span><span className="tp-door__meta">boy, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Male Shih Tzu puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2Fcrgs9ih6as_M%2Fe37bafb1bf%2Fb942a5_344e49c6c34940d2b09a3ddd5c2e3234-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#a24a1a" } as React.CSSProperties} href="/puppies/maltipoo-female-1"><span className="tp-door__plate"><span className="font-plush tp-door__name">Maltipoo</span><span className="tp-door__meta">girl, 2.5 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Maltipoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FwNm2_VIBEQvK%2F4b68f59e75%2Fb942a5_7dd33c9b78c04f78a6a1c7386fb55620-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#5a3a28" } as React.CSSProperties} href="/puppies/maltipoo-female"><span className="tp-door__plate"><span className="font-plush tp-door__name">Maltipoo</span><span className="tp-door__meta">girl, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Maltipoo puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FlMhASnmIIVQ4%2Fad2353ad31%2Fb942a5_6a5617708d75408b8f73725080ed0149-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#d4893f" } as React.CSSProperties} href="/puppies/korean-teacup-pomeranian-1"><span className="tp-door__plate"><span className="font-plush tp-door__name">Korean Teacup Pomeranian</span><span className="tp-door__meta">girl, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Korean Teacup Pomeranian puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FEsAq2LSRvVCJ%2F4d553ed044%2Fb942a5_a8d264c1aa754d80bc7c98917dfd1fda-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#b8644a" } as React.CSSProperties} href="/puppies/korean-teacup-pomeranian"><span className="tp-door__plate"><span className="font-plush tp-door__name">Korean Teacup Pomeranian</span><span className="tp-door__meta">girl, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Female Korean Teacup Pomeranian puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2Fvzf7P8SPCZ-Q%2Fa8db4ee114%2Fb942a5_967bb346583b4146acb56607f5da5f21-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door" data-open="true"><a className="tp-door__link" style={{ "--door": "#7a4a2e" } as React.CSSProperties} href="/puppies/korean-teacup-pomeranian-male"><span className="tp-door__plate"><span className="font-plush tp-door__name">Korean Teacup Pomeranian</span><span className="tp-door__meta">boy, 2 months</span></span><span className="tp-door__frame"><span className="tp-door__room"><img alt="Male Korean Teacup Pomeranian puppy" loading="lazy" decoding="async" data-nimg="fill" style={{ "position": "absolute", "height": "100%", "width": "100%", "left": 0, "top": 0, "right": 0, "bottom": 0, "objectFit": "cover"} as React.CSSProperties} sizes="(min-width: 1024px) 15rem, 44vw" srcSet="/_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FnZTGFv46hrZI%2Ffb9eeefc9c%2Fb942a5_dcb8eb174915463ea0c40c58b7b0e406-mv2.jpg&amp;w=3840&amp;q=75"/></span><span aria-hidden="true" className="tp-door__way"><span className="tp-door__leaf"><svg viewBox="0 0 64 64" className="tp-door__peephole" aria-hidden="true" fill="currentColor"><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" /></svg><span className="tp-door__knob"></span></span></span><span className="tp-door__tag font-scrawl">Available</span></span></a></li><li className="tp-door tp-door--all" data-open="true"><a className="tp-door__link" href="/puppies"><span className="tp-door__frame tp-door__frame--all"><span className="font-plush tp-door__all">Meet them all</span></span></a></li></ol><div aria-hidden="true" className="tp-meet__floor"></div><div data-pup-stop="true" data-pose="sit" data-facing="right" className="pup-stop tp-meet__teddy"><div className="pup-buddy " data-facing="right"><svg viewBox="0 0 300 240" style={{ "overflow": "visible" } as React.CSSProperties} aria-hidden="true" focusable="false"><g data-p="root"><ellipse data-p="shadow" cx="150" cy="230" rx="92" ry="7" fill="#2a170e" opacity="0.12" transform="translate(0 0) scale(1 1)" style={{ "transformBox": "fill-box", "transformOrigin": "center" } as React.CSSProperties} /><g data-p="body" transform="translate(0 -2) rotate(-24 196 206) translate(196 0) scale(1 1) translate(-196 0)" opacity="1"><g data-p="bf" transform="translate(94 192) rotate(0)" opacity="0"><path d="M-14 -14 C-14 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 14 4 14 -14Z" fill="#e4a352" /><path d="M-14 -14 C-14 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 14 4 14 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 29 v5 M4.5 29 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><g data-p="ff" transform="translate(168 192) rotate(24)"><path d="M-11 -14 C-11 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 11 4 11 -14Z" fill="#e4a352" /><path d="M-11 -14 C-11 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 11 4 11 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 29 v5 M4.5 29 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><g data-p="tail" transform="rotate(34 84 150)"><path d="M86 152 C80 146 76 140 74 136" stroke="#2a170e" strokeWidth="9" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M86 152 C80 146 76 140 74 136" stroke="#f2be6b" strokeWidth="4" fill="none" strokeLinecap="round" /><path d="M70.0 110.0Q78.1 105.0 80.9 113.7Q90.5 114.8 86.7 123.2Q93.4 129.9 84.7 134.0Q85.2 143.1 75.8 141.0Q70.0 148.3 64.2 141.0Q54.8 143.1 55.3 134.0Q46.6 129.9 53.3 123.2Q49.5 114.8 59.1 113.7Q61.9 105.0 70.0 110.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /></g><g data-p="bn" transform="translate(110 194) rotate(0)" opacity="0"><path d="M-15 -14 C-15 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 15 4 15 -14Z" fill="#f2be6b" /><path d="M-15 -14 C-15 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 15 4 15 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 27 v5 M4.5 27 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><path d="M76.8 175.6Q69.0 167.9 78.2 160.7Q76.6 151.8 90.3 147.3Q95.2 138.9 110.9 137.9Q121.6 131.3 136.7 134.0Q151.1 130.5 162.9 136.4Q178.7 136.4 185.3 144.5Q199.7 148.2 199.7 157.1Q210.3 163.7 203.9 171.9Q208.7 180.4 197.0 186.3Q195.3 195.2 180.3 198.0Q172.3 205.7 156.6 204.8Q143.7 210.0 130.0 205.6Q114.5 207.4 105.1 200.2Q89.7 198.3 86.3 189.6Q73.6 184.3 76.8 175.6Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M182.7 196.4Q169.4 196.9 166.6 183.0Q156.1 174.1 162.3 161.5Q159.6 147.6 171.9 142.2Q178.2 129.7 191.0 134.0Q203.3 128.7 210.5 140.8Q223.1 145.2 221.3 159.3Q228.4 171.5 218.5 181.0Q216.6 195.1 203.2 195.7Q193.3 205.1 182.7 196.4Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><g data-p="fn" transform="translate(186 194) rotate(24)"><path d="M-12 -14 C-12 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 12 4 12 -14Z" fill="#f2be6b" /><path d="M-12 -14 C-12 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 12 4 12 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 27 v5 M4.5 27 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g></g><g data-p="haunch" opacity="1" transform="translate(0 1.44)"><path d="M80.0 204.0Q75.1 194.9 85.7 189.9Q88.4 180.2 100.7 181.2Q110.0 174.6 119.3 181.2Q131.6 180.2 134.3 189.9Q144.9 194.9 140.0 204.0Q144.9 213.1 134.3 218.1Q131.6 227.8 119.3 226.8Q110.0 233.4 100.7 226.8Q88.4 227.8 85.7 218.1Q75.1 213.1 80.0 204.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M112 214 C126 212 142 214 146 221 C148 226 144 229 136 229 L116 229 C108 229 104 224 106 219 Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M132 222v5M139 222v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><g data-p="head" transform="translate(-10 -6) rotate(0 212 100)"><path d="M178 146 Q212 162 246 146 L246 154 Q212 170 178 154 Z" fill="#a24a1a" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" /><path d="M212 160 C212 156 206 155 206 159.4 C206 163 212 166.6 212 168.4 C212 166.6 218 163 218 159.4 C218 155 212 156 212 160 Z" fill="#fbe3b4" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" /><path data-p="earL" d="M177.1 78.7Q186.9 70.8 186.6 87.4Q196.0 89.9 189.9 105.5Q195.2 117.3 185.5 126.0Q184.7 142.8 175.2 141.2Q168.7 156.5 162.9 145.3Q153.1 153.2 153.4 136.6Q144.0 134.1 150.1 118.5Q144.8 106.7 154.5 98.0Q155.3 81.2 164.8 82.8Q171.3 67.5 177.1 78.7Z" fill="#e4a352" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" transform="rotate(0 174 82)" /><path data-p="earR" d="M246.9 78.7Q252.7 67.5 259.2 82.8Q268.7 81.2 269.5 98.0Q279.2 106.7 273.9 118.5Q280.0 134.1 270.6 136.6Q270.9 153.2 261.1 145.3Q255.3 156.5 248.8 141.2Q239.3 142.8 238.5 126.0Q228.8 117.3 234.1 105.5Q228.0 89.9 237.4 87.4Q237.1 70.8 246.9 78.7Z" fill="#e4a352" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" transform="rotate(0 250 82)" /><path d="M212.0 54.0Q223.4 48.2 231.5 57.5Q244.5 56.1 248.1 67.5Q260.7 70.7 259.1 82.4Q269.4 89.7 263.0 100.0Q269.4 110.3 259.1 117.6Q260.7 129.3 248.1 132.5Q244.5 143.9 231.5 142.5Q223.4 151.8 212.0 146.0Q200.6 151.8 192.5 142.5Q179.5 143.9 175.9 132.5Q163.3 129.3 164.9 117.6Q154.6 110.3 161.0 100.0Q154.6 89.7 164.9 82.4Q163.3 70.7 175.9 67.5Q179.5 56.1 192.5 57.5Q200.6 48.2 212.0 54.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M195.0 52.0Q190.7 45.8 200.0 43.5Q203.2 36.9 212.0 40.0Q220.8 36.9 224.0 43.5Q233.3 45.8 229.0 52.0Q233.3 58.2 224.0 60.5Q220.8 67.1 212.0 64.0Q203.2 67.1 200.0 60.5Q190.7 58.2 195.0 52.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" /><path d="M188 120 C188 106 200 100 212 100 C224 100 236 106 236 120 C236 133 225 140 212 140 C199 140 188 133 188 120 Z" fill="#fbe3b4" /><circle cx="181" cy="116" r="7" fill="#f9b9a6" opacity="0.85" /><circle cx="243" cy="116" r="7" fill="#f9b9a6" opacity="0.85" /><g data-p="eyes" transform="translate(0 0)"><g data-p="open" opacity="1"><g data-p="blink" transform="translate(0 0) scale(1 1)"><ellipse cx="194" cy="98" rx="7.4" ry="8.6" fill="#2a170e" /><ellipse cx="230" cy="98" rx="7.4" ry="8.6" fill="#2a170e" /><circle cx="196.6" cy="94.6" r="2.7" fill="#fff" /><circle cx="232.6" cy="94.6" r="2.7" fill="#fff" /><circle cx="192" cy="101.2" r="1.2" fill="#fff" /><circle cx="228" cy="101.2" r="1.2" fill="#fff" /></g></g></g><path data-p="happy" d="M186.5 101 Q194 91.5 201.5 101 M222.5 101 Q230 91.5 237.5 101" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" opacity="0" /><path data-p="shut" d="M186.5 97 Q194 103.5 201.5 97 M222.5 97 Q230 103.5 237.5 97" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" opacity="0" /><path d="M204.5 111.5 Q212 107.2 219.5 111.5 Q218.2 118.4 212 120 Q205.8 118.4 204.5 111.5 Z" fill="#2a170e" /><path d="M212 120 V124.5 M212 124.5 Q207.2 129.6 202.8 125.2 M212 124.5 Q216.8 129.6 221.2 125.2" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path data-p="tongue" d="M207.6 127.4 Q212 136.6 216.4 127.4 Z" fill="#e98c8c" stroke="#2a170e" strokeWidth="2.2" strokeLinejoin="round" opacity="1" /><g data-p="mouth" opacity="0"><path d="M203 126 Q212 122 221 126 Q219 138 212 139 Q205 138 203 126 Z" fill="#6b2a1c" stroke="#2a170e" strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round" /><path d="M206.5 133.5 Q212 130 217.5 133.5 Q215 138 212 138 Q209 138 206.5 133.5 Z" fill="#e98c8c" /></g></g><g data-p="ledge" opacity="0"><path d="M175 159 C175 148 181 142 190 142 C199 142 205 148 205 159 Z M219 159 C219 148 225 142 234 142 C243 142 249 148 249 159 Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M186 153 v-4.5 M194 153 v-4.5 M230 153 v-4.5 M238 153 v-4.5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g></g></svg><span aria-hidden="true" className="pup-bubble" data-show="false"></span></div></div></div></div></div></section>
+    <section
+      data-pup-scene="true"
+      data-tone="light"
+      className="tp-scene tp-meet"
+      data-pinned={isPinned ? "true" : undefined}
+      style={{ "--sky-top": "#fff1d8", "--sky-bottom": "#fbe3b4" } as React.CSSProperties}
+      aria-labelledby="meet-title"
+    >
+      <div
+        ref={pinRangeRef}
+        data-pin-range="true"
+        style={{
+          height: isPinned ? `calc(100vh + ${Math.round(0.85 * maxScrollX)}px)` : undefined,
+          "--pinned": isPinned ? 1 : 0,
+        } as React.CSSProperties}
+      >
+        <div className="tp-meet__stage">
+          <header className="tp-meet__head gutter">
+            <div>
+              <h2 id="meet-title" className="font-plush text-huge">
+                Meet the pups
+              </h2>
+              <p className="text-lede mt-3 max-w-[44ch] text-[var(--ink-soft)]">
+                Real puppies, real photos, looking for their families right now.
+              </p>
+            </div>
+            <Link className="btn btn-primary shrink-0" href="/puppies">
+              See all available puppies
+            </Link>
+          </header>
+
+          <div ref={hallRef} className="tp-meet__hall">
+            <ol
+              ref={trackRef}
+              className="tp-meet__track"
+              data-treadmill="true"
+              aria-label="Puppies looking for a family"
+            >
+              {FEATURED_PUPS.map((pup, idx) => (
+                <li
+                  key={pup.id}
+                  className="tp-door"
+                  data-open={isPinned ? "false" : "true"}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).dataset.open = "true";
+                  }}
+                >
+                  <Link
+                    href={`/puppies/${pup.slug}`}
+                    className="tp-door__link"
+                    style={{ "--door": DOOR_COLORS[idx % DOOR_COLORS.length] } as React.CSSProperties}
+                  >
+                    <span className="tp-door__plate">
+                      <span className="font-plush tp-door__name">{pup.name}</span>
+                      <span className="tp-door__meta">
+                        {pup.name !== pup.breed ? `${pup.breed}, ` : ""}
+                        {pup.gender}
+                        {pup.age ? `, ${pup.age}` : ""}
+                        {pup.hasVideo ? ", with video" : ""}
+                      </span>
+                    </span>
+
+                    <span className="tp-door__frame">
+                      <span className="tp-door__room">
+                        <img
+                          alt={`${pup.name}, ${pup.breed} puppy`}
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 size-full object-cover"
+                          sizes="(min-width: 1024px) 15rem, 44vw"
+                          src={pup.image}
+                        />
+                      </span>
+
+                      <span aria-hidden="true" className="tp-door__way">
+                        <span className="tp-door__leaf">
+                          <svg
+                            viewBox="0 0 64 64"
+                            className="tp-door__peephole"
+                            aria-hidden="true"
+                            fill="currentColor"
+                          >
+                            <path d={PAW_PATH} />
+                          </svg>
+                          <span className="tp-door__knob"></span>
+                        </span>
+                      </span>
+
+                      <span className="tp-door__tag font-scrawl">Available</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+
+              {/* End Door Card matching reference site */}
+              <li className="tp-door tp-door--all" data-open="true">
+                <Link href="/puppies" className="tp-door__link">
+                  <span className="tp-door__frame tp-door__frame--all">
+                    <span className="font-plush tp-door__all">Meet them all &rarr;</span>
+                  </span>
+                </Link>
+              </li>
+            </ol>
+
+            {/* Wooden Floor Planks matching reference site */}
+            <div aria-hidden="true" className="tp-meet__floor"></div>
+
+            {/* Mascot puppy on treadmill */}
+            <div aria-hidden="true" className="pup-stop tp-meet__teddy">
+              <svg viewBox="0 0 160 160" className="size-full" fill="none">
+                <ellipse cx="80" cy="140" rx="42" ry="6" fill="#2a170e" opacity="0.2" />
+                <path
+                  d="M48 68 Q36 60 40 82 Q44 94 54 88"
+                  fill="#e4a352"
+                  stroke="#2a170e"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M112 68 Q124 60 120 82 Q116 94 106 88"
+                  fill="#e4a352"
+                  stroke="#2a170e"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <circle cx="80" cy="88" r="38" fill="#f2be6b" stroke="#2a170e" strokeWidth="3" />
+                <circle cx="68" cy="80" r="4.5" fill="#2a170e" />
+                <circle cx="92" cy="80" r="4.5" fill="#2a170e" />
+                <circle cx="69.5" cy="78" r="1.5" fill="#fff" />
+                <circle cx="93.5" cy="78" r="1.5" fill="#fff" />
+                <ellipse cx="80" cy="92" rx="6" ry="4.5" fill="#2a170e" />
+                <path
+                  d="M80 96.5 Q74 102 68 98 M80 96.5 Q86 102 92 98"
+                  stroke="#2a170e"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+                <circle cx="60" cy="92" r="5" fill="#f9b9a6" opacity="0.6" />
+                <circle cx="100" cy="92" r="5" fill="#f9b9a6" opacity="0.6" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

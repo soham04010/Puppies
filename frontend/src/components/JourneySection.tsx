@@ -12,23 +12,24 @@ interface StepItem {
 const STEPS: StepItem[] = [
   {
     title: "Choose your breed",
-    desc: "Select your preferred breed or tell us what you're looking for. We'll guide you based on availability and your lifestyle."
+    desc: "Select your preferred breed or tell us what you're looking for. We'll guide you based on availability and your lifestyle.",
   },
   {
     title: "Get photos & details",
-    desc: "Our team will share real photos, health details, and all necessary information directly on WhatsApp."
+    desc: "Our team will share real photos, health details, and all necessary information directly on WhatsApp.",
   },
   {
     title: "Secure & safe delivery",
-    desc: "Once confirmed, we handle everything professionally and ensure your puppy reaches you safely and stress-free."
-  }
+    desc: "Once confirmed, we handle everything professionally and ensure your puppy reaches you safely and stress-free.",
+  },
 ];
 
 export default function JourneySection() {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const stepsListRef = useRef<HTMLOListElement>(null);
 
   const handleVideoToggle = () => {
     if (!videoRef.current) return;
@@ -36,57 +37,269 @@ export default function JourneySection() {
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(() => {});
+      videoRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch(() => {});
     }
   };
 
+  // Scroll sync: As user scrolls through steps, activate corresponding WhatsApp chat step
+  useEffect(() => {
+    const list = stepsListRef.current;
+    if (!list) return;
+
+    const items = Array.from(list.children) as HTMLElement[];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = items.indexOf(entry.target as HTMLElement);
+            if (idx >= 0) {
+              setActiveStep(idx);
+            }
+          }
+        }
+      },
+      { rootMargin: "-28% 0px -62% 0px" }
+    );
+
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
+
+  // Realistic WhatsApp typing indicator effect on step transition
   useEffect(() => {
     setIsTyping(true);
-    const t = setTimeout(() => setIsTyping(false), 600);
+    const t = setTimeout(() => setIsTyping(false), 650);
     return () => clearTimeout(t);
   }, [activeStep]);
 
   return (
-    <section data-pup-scene="true" data-tone="light" className="tp-scene tp-chat" style={{ "--sky-top": "#f7d18d", "--sky-bottom": "#f0b866" } as React.CSSProperties} aria-labelledby="journey-title"><div className="tp-chat__grid gutter" data-pin-range="true"><div className="tp-chat__story"><h2 id="journey-title" className="font-plush text-huge">Your puppy journey</h2><p className="text-lede mt-5 max-w-[42ch] text-[var(--ink-soft)]">A premium, step-by-step concierge experience. We make adoption simple, secure, and purely joyful.</p><ol className="tp-chat__steps">
-  {STEPS.map((s, idx) => (
-    <li
-      key={s.title}
-      className="tp-chat__step cursor-pointer"
-      data-active={activeStep === idx ? "true" : undefined}
-      data-done={activeStep > idx ? "true" : undefined}
-      onClick={() => setActiveStep(idx)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setActiveStep(idx);
-        }
-      }}
+    <section
+      data-pup-scene="true"
+      data-tone="light"
+      className="tp-scene tp-chat"
+      style={{ "--sky-top": "#f7d18d", "--sky-bottom": "#f0b866" } as React.CSSProperties}
+      aria-labelledby="journey-title"
     >
-      <span className="tp-chat__num font-plush" aria-hidden="true">
-        {idx + 1}
-      </span>
-      <h3 className="font-plush tp-chat__title">{s.title}</h3>
-      <p className="tp-chat__text">{s.desc}</p>
-    </li>
-  ))}
-</ol><a className="btn btn-ghost tp-chat__cta" href="/how-it-works">How it works</a></div><div className="tp-chat__side"><div className="tp-phone" aria-label="A WhatsApp conversation with TeddyPups U.A.E." role="group"><div className="tp-phone__bar"><img alt="" loading="lazy" width="40" height="40" decoding="async" data-nimg="1" className="tp-phone__avatar" style={{ "color": "transparent" }} srcSet="/_next/image?url=%2Fbrand%2Flogo.png&amp;w=48&amp;q=75 1x, /_next/image?url=%2Fbrand%2Flogo.png&amp;w=96&amp;q=75 2x" src="/_next/image?url=%2Fbrand%2Flogo.png&amp;w=96&amp;q=75"/><span><span className="tp-phone__name">TeddyPups U.A.E.</span><span className="tp-phone__status">online</span></span></div><div className="tp-phone__screen"><p className="tp-msg tp-msg--me">Hi TeddyPups! I'd love to know more about your puppies.</p><div className="tp-msg-group" data-step="0" data-show={activeStep >= 0 ? "true" : "false"}><div className="tp-msg tp-msg--them"><p>Select your preferred breed or tell us what you're looking for. We'll guide you based on availability and your lifestyle.</p><ul className="tp-chips" aria-label="Breeds we have now"><li><a href="/puppies?breed=maltipoo">Maltipoo</a></li><li><a href="/puppies?breed=pomeranian">Pomeranian</a></li><li><a href="/puppies?breed=poodle">Poodle</a></li><li><a href="/puppies?breed=cavapoo">Cavapoo</a></li><li><a href="/puppies?breed=shih-tzu">Shih Tzu</a></li></ul></div></div><div className="tp-msg-group" data-step="1" data-show={activeStep >= 1 ? "true" : "false"}><div className="tp-msg tp-msg--them tp-msg--media"><div className="tp-snaps"><span className="tp-snaps__one"><img alt="A tiny apricot teddy bear puppy held up in the TeddyPups showroom" loading="lazy" decoding="async" data-nimg="fill" style={{ position: "absolute", height: "100%", width: "100%", left: 0, top: 0, right: 0, bottom: 0, objectFit: "cover" }} sizes="9rem" srcSet="/_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=32&amp;q=75 32w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=48&amp;q=75 48w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=64&amp;q=75 64w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=96&amp;q=75 96w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=128&amp;q=75 128w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=256&amp;q=75 256w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FFHyoHcIosLZE%2F60f6e7e00a%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg&amp;w=3840&amp;q=75"/></span><span className="tp-snaps__one"><img alt="The apricot teddy bear puppy from our showroom, close up" loading="lazy" decoding="async" data-nimg="fill" style={{ position: "absolute", height: "100%", width: "100%", left: 0, top: 0, right: 0, bottom: 0, objectFit: "cover" }} sizes="9rem" srcSet="/_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=32&amp;q=75 32w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=48&amp;q=75 48w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=64&amp;q=75 64w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=96&amp;q=75 96w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=128&amp;q=75 128w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=256&amp;q=75 256w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2FVi-kzyvemRl4%2Fe740ed8a24%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg&amp;w=3840&amp;q=75"/></span><span className="tp-snaps__one"><img alt="The apricot teddy bear puppy from our showroom, looking up" loading="lazy" decoding="async" data-nimg="fill" style={{ position: "absolute", height: "100%", width: "100%", left: 0, top: 0, right: 0, bottom: 0, objectFit: "cover" }} sizes="9rem" srcSet="/_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=32&amp;q=75 32w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=48&amp;q=75 48w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=64&amp;q=75 64w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=96&amp;q=75 96w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=128&amp;q=75 128w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=256&amp;q=75 256w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2Fg_e4ebbc7fyG%2F8276289ae7%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg&amp;w=3840&amp;q=75"/></span><span className="tp-snaps__one"><img alt="The apricot teddy bear puppy from our showroom, held up to say hello" loading="lazy" decoding="async" data-nimg="fill" style={{ position: "absolute", height: "100%", width: "100%", left: 0, top: 0, right: 0, bottom: 0, objectFit: "cover" }} sizes="9rem" srcSet="/_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=32&amp;q=75 32w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=48&amp;q=75 48w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=64&amp;q=75 64w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=96&amp;q=75 96w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=128&amp;q=75 128w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=256&amp;q=75 256w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=384&amp;q=75 384w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=3840&amp;q=75 3840w" src="/_next/image?url=%2Fmedia%2Fskvodl2NZiKq%2Fcefab5eee9%2F27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg&amp;w=3840&amp;q=75"/></span></div></div><div className="tp-msg tp-msg--them tp-msg--media"><div className="tp-clip"><video ref={videoRef} src="/media/dSAUmXs8Qai9/ef39cbea20/27b888_323008bb0f6a41d4bde2a0da7206cd98-720p.mp4" poster="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg" muted loop playsInline preload="none" aria-label="Video of a tiny apricot teddy bear puppy in the TeddyPups showroom"></video><button
-      type="button"
-      className="tp-clip__play"
-      aria-pressed={isPlaying}
-      aria-label={isPlaying ? "Pause video" : "Play video"}
-      onClick={handleVideoToggle}
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        {isPlaying ? (
-          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-        ) : (
-          <path d="M8 5v14l11-7z" />
-        )}
-      </svg>
-    </button></div></div><p className="tp-msg tp-msg--them">Our team will share real photos, health details, and all necessary information directly on WhatsApp.</p></div><div className="tp-msg-group" data-step="2" data-show={activeStep >= 2 ? "true" : "false"}><div className="tp-msg tp-msg--them"><p>Once confirmed, we handle everything professionally and ensure your puppy reaches you safely and stress-free.</p><svg viewBox="0 0 220 70" className="tp-route" aria-hidden="true"><path d="M14 52 C 60 6, 120 70, 170 28" className="tp-route__line" /><circle cx="14" cy="52" r="5" className="tp-route__dot" /><path d="M164 32 l12 -12 l12 12 v14 h-24 z" className="tp-route__home" /><path d="M176 42 c-2-3-7-2-6 2c1 3 6 5 6 5s5-2 6-5c1-4-4-5-6-2z" className="tp-route__heart" /><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" transform="translate(70 22) scale(.3) rotate(70 32 32)" className="tp-route__paw" /><path d="M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM19.28 26.71C21.07 30.08 20.42 33.92 17.84 35.29C15.25 36.67 11.71 35.05 9.92 31.69C8.13 28.32 8.78 24.48 11.36 23.11C13.95 21.73 17.49 23.35 19.28 26.71ZM29.62 15.64C30.32 19.62 28.46 23.26 25.47 23.79C22.48 24.32 19.48 21.53 18.78 17.56C18.08 13.58 19.94 9.94 22.93 9.41C25.92 8.88 28.92 11.67 29.62 15.64ZM45.22 17.56C44.52 21.53 41.52 24.32 38.53 23.79C35.54 23.26 33.68 19.62 34.38 15.64C35.08 11.67 38.08 8.88 41.07 9.41C44.06 9.94 45.92 13.58 45.22 17.56ZM54.08 31.69C52.29 35.05 48.75 36.67 46.16 35.29C43.58 33.92 42.93 30.08 44.72 26.71C46.51 23.35 50.05 21.73 52.64 23.11C55.22 24.48 55.87 28.32 54.08 31.69Z" transform="translate(104 38) scale(.3) rotate(100 32 32)" className="tp-route__paw" /></svg></div></div><p className="tp-typing" data-show={isTyping ? "true" : "false"} aria-hidden="true"><span></span><span></span><span></span></p></div><a href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20love%20to%20know%20more%20about%20your%20puppies." target="_blank" rel="noopener noreferrer" className="tp-phone__compose"><span>Say hello on WhatsApp</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l18-8L3 4v6l12 2-12 2z" /></svg></a></div><div data-pup-stop="true" data-pose="sit" data-facing="right" className="pup-stop tp-chat__teddy"><div className="pup-buddy " data-facing="right"><svg viewBox="0 0 300 240" style={{ "overflow": "visible" }} aria-hidden="true" focusable="false"><g data-p="root"><ellipse data-p="shadow" cx="150" cy="230" rx="92" ry="7" fill="#2a170e" opacity="0.12" transform="translate(0 0) scale(1 1)" style={{ "transformBox": "fill-box", "transformOrigin": "center" }} /><g data-p="body" transform="translate(0 -2) rotate(-24 196 206) translate(196 0) scale(1 1) translate(-196 0)" opacity="1"><g data-p="bf" transform="translate(94 192) rotate(0)" opacity="0"><path d="M-14 -14 C-14 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 14 4 14 -14Z" fill="#e4a352" /><path d="M-14 -14 C-14 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 14 4 14 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 29 v5 M4.5 29 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><g data-p="ff" transform="translate(168 192) rotate(24)"><path d="M-11 -14 C-11 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 11 4 11 -14Z" fill="#e4a352" /><path d="M-11 -14 C-11 4 -12 18 -12 27 C-12 34 -7 36 0 36 C9 36 13 33 13 27 C13 18 11 4 11 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 29 v5 M4.5 29 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><g data-p="tail" transform="rotate(34 84 150)"><path d="M86 152 C80 146 76 140 74 136" stroke="#2a170e" strokeWidth="9" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M86 152 C80 146 76 140 74 136" stroke="#f2be6b" strokeWidth="4" fill="none" strokeLinecap="round" /><path d="M70.0 110.0Q78.1 105.0 80.9 113.7Q90.5 114.8 86.7 123.2Q93.4 129.9 84.7 134.0Q85.2 143.1 75.8 141.0Q70.0 148.3 64.2 141.0Q54.8 143.1 55.3 134.0Q46.6 129.9 53.3 123.2Q49.5 114.8 59.1 113.7Q61.9 105.0 70.0 110.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /></g><g data-p="bn" transform="translate(110 194) rotate(0)" opacity="0"><path d="M-15 -14 C-15 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 15 4 15 -14Z" fill="#f2be6b" /><path d="M-15 -14 C-15 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 15 4 15 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 27 v5 M4.5 27 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><path d="M76.8 175.6Q69.0 167.9 78.2 160.7Q76.6 151.8 90.3 147.3Q95.2 138.9 110.9 137.9Q121.6 131.3 136.7 134.0Q151.1 130.5 162.9 136.4Q178.7 136.4 185.3 144.5Q199.7 148.2 199.7 157.1Q210.3 163.7 203.9 171.9Q208.7 180.4 197.0 186.3Q195.3 195.2 180.3 198.0Q172.3 205.7 156.6 204.8Q143.7 210.0 130.0 205.6Q114.5 207.4 105.1 200.2Q89.7 198.3 86.3 189.6Q73.6 184.3 76.8 175.6Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M182.7 196.4Q169.4 196.9 166.6 183.0Q156.1 174.1 162.3 161.5Q159.6 147.6 171.9 142.2Q178.2 129.7 191.0 134.0Q203.3 128.7 210.5 140.8Q223.1 145.2 221.3 159.3Q228.4 171.5 218.5 181.0Q216.6 195.1 203.2 195.7Q193.3 205.1 182.7 196.4Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><g data-p="fn" transform="translate(186 194) rotate(24)"><path d="M-12 -14 C-12 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 12 4 12 -14Z" fill="#f2be6b" /><path d="M-12 -14 C-12 4 -12 16 -12 25 C-12 32 -7 34 0 34 C9 34 13 31 13 25 C13 16 12 4 12 -14" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path d="M-3.5 27 v5 M4.5 27 v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g></g><g data-p="haunch" opacity="1" transform="translate(0 1.44)"><path d="M80.0 204.0Q75.1 194.9 85.7 189.9Q88.4 180.2 100.7 181.2Q110.0 174.6 119.3 181.2Q131.6 180.2 134.3 189.9Q144.9 194.9 140.0 204.0Q144.9 213.1 134.3 218.1Q131.6 227.8 119.3 226.8Q110.0 233.4 100.7 226.8Q88.4 227.8 85.7 218.1Q75.1 213.1 80.0 204.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M112 214 C126 212 142 214 146 221 C148 226 144 229 136 229 L116 229 C108 229 104 224 106 219 Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M132 222v5M139 222v5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g><g data-p="head" transform="translate(-10 -6) rotate(0 212 100)"><path d="M178 146 Q212 162 246 146 L246 154 Q212 170 178 154 Z" fill="#a24a1a" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" /><path d="M212 160 C212 156 206 155 206 159.4 C206 163 212 166.6 212 168.4 C212 166.6 218 163 218 159.4 C218 155 212 156 212 160 Z" fill="#fbe3b4" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" /><path data-p="earL" d="M177.1 78.7Q186.9 70.8 186.6 87.4Q196.0 89.9 189.9 105.5Q195.2 117.3 185.5 126.0Q184.7 142.8 175.2 141.2Q168.7 156.5 162.9 145.3Q153.1 153.2 153.4 136.6Q144.0 134.1 150.1 118.5Q144.8 106.7 154.5 98.0Q155.3 81.2 164.8 82.8Q171.3 67.5 177.1 78.7Z" fill="#e4a352" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" transform="rotate(0 174 82)" /><path data-p="earR" d="M246.9 78.7Q252.7 67.5 259.2 82.8Q268.7 81.2 269.5 98.0Q279.2 106.7 273.9 118.5Q280.0 134.1 270.6 136.6Q270.9 153.2 261.1 145.3Q255.3 156.5 248.8 141.2Q239.3 142.8 238.5 126.0Q228.8 117.3 234.1 105.5Q228.0 89.9 237.4 87.4Q237.1 70.8 246.9 78.7Z" fill="#e4a352" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" transform="rotate(0 250 82)" /><path d="M212.0 54.0Q223.4 48.2 231.5 57.5Q244.5 56.1 248.1 67.5Q260.7 70.7 259.1 82.4Q269.4 89.7 263.0 100.0Q269.4 110.3 259.1 117.6Q260.7 129.3 248.1 132.5Q244.5 143.9 231.5 142.5Q223.4 151.8 212.0 146.0Q200.6 151.8 192.5 142.5Q179.5 143.9 175.9 132.5Q163.3 129.3 164.9 117.6Q154.6 110.3 161.0 100.0Q154.6 89.7 164.9 82.4Q163.3 70.7 175.9 67.5Q179.5 56.1 192.5 57.5Q200.6 48.2 212.0 54.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M195.0 52.0Q190.7 45.8 200.0 43.5Q203.2 36.9 212.0 40.0Q220.8 36.9 224.0 43.5Q233.3 45.8 229.0 52.0Q233.3 58.2 224.0 60.5Q220.8 67.1 212.0 64.0Q203.2 67.1 200.0 60.5Q190.7 58.2 195.0 52.0Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" /><path d="M188 120 C188 106 200 100 212 100 C224 100 236 106 236 120 C236 133 225 140 212 140 C199 140 188 133 188 120 Z" fill="#fbe3b4" /><circle cx="181" cy="116" r="7" fill="#f9b9a6" opacity="0.85" /><circle cx="243" cy="116" r="7" fill="#f9b9a6" opacity="0.85" /><g data-p="eyes" transform="translate(0 0)"><g data-p="open" opacity="1"><g data-p="blink" transform="translate(0 0) scale(1 1)"><ellipse cx="194" cy="98" rx="7.4" ry="8.6" fill="#2a170e" /><ellipse cx="230" cy="98" rx="7.4" ry="8.6" fill="#2a170e" /><circle cx="196.6" cy="94.6" r="2.7" fill="#fff" /><circle cx="232.6" cy="94.6" r="2.7" fill="#fff" /><circle cx="192" cy="101.2" r="1.2" fill="#fff" /><circle cx="228" cy="101.2" r="1.2" fill="#fff" /></g></g></g><path data-p="happy" d="M186.5 101 Q194 91.5 201.5 101 M222.5 101 Q230 91.5 237.5 101" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" opacity="0" /><path data-p="shut" d="M186.5 97 Q194 103.5 201.5 97 M222.5 97 Q230 103.5 237.5 97" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" fill="none" opacity="0" /><path d="M204.5 111.5 Q212 107.2 219.5 111.5 Q218.2 118.4 212 120 Q205.8 118.4 204.5 111.5 Z" fill="#2a170e" /><path d="M212 120 V124.5 M212 124.5 Q207.2 129.6 202.8 125.2 M212 124.5 Q216.8 129.6 221.2 125.2" stroke="#2a170e" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" fill="none" /><path data-p="tongue" d="M207.6 127.4 Q212 136.6 216.4 127.4 Z" fill="#e98c8c" stroke="#2a170e" strokeWidth="2.2" strokeLinejoin="round" opacity="1" /><g data-p="mouth" opacity="0"><path d="M203 126 Q212 122 221 126 Q219 138 212 139 Q205 138 203 126 Z" fill="#6b2a1c" stroke="#2a170e" strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round" /><path d="M206.5 133.5 Q212 130 217.5 133.5 Q215 138 212 138 Q209 138 206.5 133.5 Z" fill="#e98c8c" /></g></g><g data-p="ledge" opacity="0"><path d="M175 159 C175 148 181 142 190 142 C199 142 205 148 205 159 Z M219 159 C219 148 225 142 234 142 C243 142 249 148 249 159 Z" fill="#f2be6b" stroke="#2a170e" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" /><path d="M186 153 v-4.5 M194 153 v-4.5 M230 153 v-4.5 M238 153 v-4.5" stroke="#2a170e" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" fill="none" /></g></g></svg><span aria-hidden="true" className="pup-bubble" data-show="false"></span></div></div></div></div></section>
+      <div className="tp-chat__grid gutter" data-pin-range="true">
+        <div className="tp-chat__story">
+          <h2 id="journey-title" className="font-plush text-huge">
+            Your puppy journey
+          </h2>
+          <p className="text-lede mt-5 max-w-[42ch] text-[var(--ink-soft)]">
+            A premium, step-by-step concierge experience. We make adoption simple, secure, and purely joyful.
+          </p>
+          <ol ref={stepsListRef} className="tp-chat__steps">
+            {STEPS.map((s, idx) => (
+              <li
+                key={s.title}
+                className="tp-chat__step cursor-pointer"
+                data-active={activeStep === idx ? "true" : undefined}
+                data-done={activeStep > idx ? "true" : undefined}
+                onClick={() => setActiveStep(idx)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveStep(idx);
+                  }
+                }}
+              >
+                <span className="tp-chat__num font-plush" aria-hidden="true">
+                  {idx + 1}
+                </span>
+                <h3 className="font-plush tp-chat__title">{s.title}</h3>
+                <p className="tp-chat__text">{s.desc}</p>
+              </li>
+            ))}
+          </ol>
+          <Link className="btn btn-ghost tp-chat__cta" href="/how-it-works">
+            How it works
+          </Link>
+        </div>
+
+        <div className="tp-chat__side">
+          <div className="tp-phone" aria-label="A WhatsApp conversation with TeddyPups U.A.E." role="group">
+            <div className="tp-phone__bar">
+              <Image
+                alt="TeddyPups"
+                width={40}
+                height={40}
+                className="tp-phone__avatar"
+                src="/brand/logo.png"
+              />
+              <span>
+                <span className="tp-phone__name">TeddyPups U.A.E.</span>
+                <span className="tp-phone__status">online</span>
+              </span>
+            </div>
+
+            <div className="tp-phone__screen">
+              <p className="tp-msg tp-msg--me">Hi TeddyPups! I&apos;d love to know more about your puppies.</p>
+
+              {/* Step 0: Breed options */}
+              <div className="tp-msg-group" data-step="0" data-show={activeStep >= 0 ? "true" : "false"}>
+                <div className="tp-msg tp-msg--them">
+                  <p>
+                    Select your preferred breed or tell us what you&apos;re looking for. We&apos;ll guide you based on availability and your lifestyle.
+                  </p>
+                  <ul className="tp-chips" aria-label="Breeds we have now">
+                    <li>
+                      <Link href="/puppies?breed=maltipoo">Maltipoo</Link>
+                    </li>
+                    <li>
+                      <Link href="/puppies?breed=pomeranian">Pomeranian</Link>
+                    </li>
+                    <li>
+                      <Link href="/puppies?breed=poodle">Poodle</Link>
+                    </li>
+                    <li>
+                      <Link href="/puppies?breed=cavapoo">Cavapoo</Link>
+                    </li>
+                    <li>
+                      <Link href="/puppies?breed=shih-tzu">Shih Tzu</Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Step 1: Photos & HD Video */}
+              <div className="tp-msg-group" data-step="1" data-show={activeStep >= 1 ? "true" : "false"}>
+                <div className="tp-msg tp-msg--them tp-msg--media">
+                  <div className="tp-snaps">
+                    <span className="tp-snaps__one relative overflow-hidden">
+                      <Image
+                        alt="A tiny apricot teddy bear puppy held up in the TeddyPups showroom"
+                        fill
+                        className="object-cover"
+                        sizes="9rem"
+                        src="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg"
+                      />
+                    </span>
+                    <span className="tp-snaps__one relative overflow-hidden">
+                      <Image
+                        alt="The apricot teddy bear puppy from our showroom, close up"
+                        fill
+                        className="object-cover"
+                        sizes="9rem"
+                        src="/media/Vi-kzyvemRl4/e740ed8a24/27b888_323008bb0f6a41d4bde2a0da7206cd98f001.jpg"
+                      />
+                    </span>
+                    <span className="tp-snaps__one relative overflow-hidden">
+                      <Image
+                        alt="The apricot teddy bear puppy from our showroom, looking up"
+                        fill
+                        className="object-cover"
+                        sizes="9rem"
+                        src="/media/g_e4ebbc7fyG/8276289ae7/27b888_323008bb0f6a41d4bde2a0da7206cd98f002.jpg"
+                      />
+                    </span>
+                    <span className="tp-snaps__one relative overflow-hidden">
+                      <Image
+                        alt="The apricot teddy bear puppy from our showroom, held up to say hello"
+                        fill
+                        className="object-cover"
+                        sizes="9rem"
+                        src="/media/skvodl2NZiKq/cefab5eee9/27b888_323008bb0f6a41d4bde2a0da7206cd98f003.jpg"
+                      />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="tp-msg tp-msg--them tp-msg--media">
+                  <div className="tp-clip">
+                    <video
+                      ref={videoRef}
+                      src="/media/dSAUmXs8Qai9/ef39cbea20/27b888_323008bb0f6a41d4bde2a0da7206cd98-720p.mp4"
+                      poster="/media/FHyoHcIosLZE/60f6e7e00a/27b888_323008bb0f6a41d4bde2a0da7206cd98f000.jpg"
+                      muted
+                      loop
+                      playsInline
+                      preload="none"
+                      aria-label="Video of a tiny apricot teddy bear puppy in the TeddyPups showroom"
+                    ></video>
+                    <button
+                      type="button"
+                      className="tp-clip__play"
+                      aria-pressed={isPlaying}
+                      aria-label={isPlaying ? "Pause video" : "Play video"}
+                      onClick={handleVideoToggle}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                        {isPlaying ? (
+                          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        ) : (
+                          <path d="M8 5v14l11-7z" />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p className="tp-msg tp-msg--them">
+                  Our team will share real photos, health details, and all necessary information directly on WhatsApp.
+                </p>
+              </div>
+
+              {/* Step 2: Delivery & Happy Arrival */}
+              <div className="tp-msg-group" data-step="2" data-show={activeStep >= 2 ? "true" : "false"}>
+                <div className="tp-msg tp-msg--them">
+                  <p>
+                    Once confirmed, we handle everything professionally and ensure your puppy reaches you safely and stress-free.
+                  </p>
+                  <svg viewBox="0 0 220 70" className="tp-route" aria-hidden="true">
+                    <path d="M14 52 C 60 6, 120 70, 170 28" className="tp-route__line" />
+                    <circle cx="14" cy="52" r="5" className="tp-route__dot" />
+                    <path d="M164 32 l12 -12 l12 12 v14 h-24 z" className="tp-route__home" />
+                    <path d="M176 42 c-2-3-7-2-6 2c1 3 6 5 6 5s5-2 6-5c1-4-4-5-6-2z" className="tp-route__heart" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Typing indicator */}
+              <p className="tp-typing" data-show={isTyping ? "true" : "false"} aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </p>
+            </div>
+
+            <a
+              href="https://wa.me/971541676733?text=Hi%20TeddyPups!%20I'd%20love%20to%20know%20more%20about%20your%20puppies."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tp-phone__compose"
+            >
+              <span>Say hello on WhatsApp</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                <path d="M3 20l18-8L3 4v6l12 2-12 2z" />
+              </svg>
+            </a>
+          </div>
+
+          {/* Mascot sitting by WhatsApp */}
+          <div data-pup-stop="true" data-pose="sit" data-facing="right" className="pup-stop tp-chat__teddy">
+            <svg viewBox="0 0 160 160" className="size-full" fill="none">
+              <ellipse cx="80" cy="140" rx="42" ry="6" fill="#2a170e" opacity="0.2" />
+              <path d="M48 68 Q36 60 40 82 Q44 94 54 88" fill="#e4a352" stroke="#2a170e" strokeWidth="3" strokeLinecap="round" />
+              <path d="M112 68 Q124 60 120 82 Q116 94 106 88" fill="#e4a352" stroke="#2a170e" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="80" cy="88" r="38" fill="#f2be6b" stroke="#2a170e" strokeWidth="3" />
+              <circle cx="68" cy="80" r="4.5" fill="#2a170e" />
+              <circle cx="92" cy="80" r="4.5" fill="#2a170e" />
+              <circle cx="69.5" cy="78" r="1.5" fill="#fff" />
+              <circle cx="93.5" cy="78" r="1.5" fill="#fff" />
+              <ellipse cx="80" cy="92" rx="6" ry="4.5" fill="#2a170e" />
+              <path d="M80 96.5 Q74 102 68 98 M80 96.5 Q86 102 92 98" stroke="#2a170e" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="60" cy="92" r="5" fill="#f9b9a6" opacity="0.6" />
+              <circle cx="100" cy="92" r="5" fill="#f9b9a6" opacity="0.6" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

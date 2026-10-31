@@ -26,6 +26,7 @@ yarn-error.log*
 # Scraped cache / scratch
 scraped_data/
 scraped_assets/
+scripts/
 .DS_Store
 Thumbs.db
 *.tsbuildinfo
