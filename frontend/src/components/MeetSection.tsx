@@ -406,6 +406,10 @@ export default function MeetSection() {
               facing="right"
               className="tp-meet__teddy"
               strideSpeed={1.2}
+              style={{
+                bottom: "calc(var(--floor-h) - 8px)",
+                zIndex: 20,
+              }}
             />
           </div>
         </div>

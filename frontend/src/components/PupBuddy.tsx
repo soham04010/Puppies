@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 // Colors extracted from reference site chunk_1ll.js (mod 1063 & 55334)
 export const PUPPY_COLORS = {
@@ -44,7 +44,7 @@ function createFluffyPath(
   return `${d}Z`;
 }
 
-// Pre-computed SVG shape paths
+// Pre-computed SVG shape paths matching the reference site
 const SHAPES = {
   body: createFluffyPath(140, 170, 64, 36, 15, 3.4, 0.95 * Math.PI),
   chest: createFluffyPath(192, 166, 30, 32, 9, 3.2, 0.6 * Math.PI),
@@ -94,25 +94,32 @@ const LEGS = {
 };
 
 interface PupBuddyProps {
-  pose?: "sit" | "walk" | "stand" | "peek";
+  pose?: "sit" | "walk" | "stand" | "peek" | "happy" | "bow";
   facing?: "left" | "right";
   act?: "treadmill" | "tilt";
   className?: string;
   style?: React.CSSProperties;
   label?: string;
   strideSpeed?: number;
+  walkProgress?: number;
+  isWalking?: boolean;
 }
 
 export default function PupBuddy({
   pose = "sit",
-  facing = "right",
+  facing: initialFacing = "right",
   act,
   className = "",
   style,
   label = "Teddy, the TeddyPups puppy",
   strideSpeed = 1,
+  walkProgress,
+  isWalking: propIsWalking,
 }: PupBuddyProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState(0);
+  const [internalWalking, setInternalWalking] = useState(false);
+  const [facing, setFacing] = useState<"left" | "right">(initialFacing);
   const [blink, setBlink] = useState(0);
   const [happy, setHappy] = useState(false);
   const [speech, setSpeech] = useState<string | null>(null);
@@ -120,20 +127,70 @@ export default function PupBuddy({
   const heartCounter = useRef(0);
   const speechTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // Synchronize facing prop
+  useEffect(() => {
+    setFacing(initialFacing);
+  }, [initialFacing]);
+
   // Blinking cycle
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const triggerBlink = () => {
       setBlink(1);
       setTimeout(() => setBlink(0), 160);
-      timeout = setTimeout(triggerBlink, 2400 + Math.random() * 3200);
+      timeout = setTimeout(triggerBlink, 2200 + Math.random() * 3200);
     };
     timeout = setTimeout(triggerBlink, 1500);
     return () => clearTimeout(timeout);
   }, []);
 
-  // Continuous walking or idle animation
+  // Treadmill scroll listener: couples walking gait directly to track motion!
   useEffect(() => {
+    if (act !== "treadmill") return;
+
+    let animId: number;
+    let prevLeft: number | null = null;
+    let walkAccum = 0;
+    let idleTimer = 0;
+    let lastTime = performance.now();
+
+    const checkTrack = (now: number) => {
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      const track = document.querySelector<HTMLElement>("[data-treadmill='true']");
+      if (track) {
+        const left = track.getBoundingClientRect().left;
+        if (prevLeft !== null) {
+          const dx = left - prevLeft;
+          if (Math.abs(dx) > 0.15) {
+            idleTimer = 0;
+            setInternalWalking(true);
+            setFacing(dx < 0 ? "right" : "left");
+            walkAccum += Math.abs(dx);
+            setPhase((walkAccum * 0.045) % (Math.PI * 2));
+          } else {
+            idleTimer += dt;
+            if (idleTimer > 0.22) {
+              setInternalWalking(false);
+              // subtle breathing
+              setPhase((prev) => (prev + dt * 1.8) % (Math.PI * 2));
+            }
+          }
+        }
+        prevLeft = left;
+      }
+      animId = requestAnimationFrame(checkTrack);
+    };
+
+    animId = requestAnimationFrame(checkTrack);
+    return () => cancelAnimationFrame(animId);
+  }, [act]);
+
+  // Standard animation loop when not on treadmill
+  useEffect(() => {
+    if (act === "treadmill" || typeof walkProgress === "number") return;
+
     let animId: number;
     let lastTime = performance.now();
 
@@ -141,10 +198,10 @@ export default function PupBuddy({
       const dt = (now - lastTime) / 1000;
       lastTime = now;
 
-      if (pose === "walk" || act === "treadmill") {
+      if (pose === "walk") {
         setPhase((prev) => (prev + dt * 5.2 * strideSpeed) % (Math.PI * 2));
       } else {
-        // Subtle breathing / tail wag
+        // Idle breathing and tail wag
         setPhase((prev) => (prev + dt * 2.2) % (Math.PI * 2));
       }
       animId = requestAnimationFrame(loop);
@@ -152,7 +209,14 @@ export default function PupBuddy({
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [pose, act, strideSpeed]);
+  }, [pose, act, strideSpeed, walkProgress]);
+
+  // External walk progress if provided
+  useEffect(() => {
+    if (typeof walkProgress === "number") {
+      setPhase((walkProgress * 0.045) % (Math.PI * 2));
+    }
+  }, [walkProgress]);
 
   const handleClick = (e: React.MouseEvent) => {
     setHappy(true);
@@ -174,48 +238,59 @@ export default function PupBuddy({
     speechTimer.current = setTimeout(() => setSpeech(null), 2000);
   };
 
-  // Dynamic transforms based on phase and pose
-  const isWalking = pose === "walk" || act === "treadmill";
-  const isSitting = pose === "sit";
+  // Determine walking state
+  const isWalkingActive =
+    act === "treadmill"
+      ? internalWalking
+      : typeof propIsWalking === "boolean"
+      ? propIsWalking
+      : pose === "walk";
+
+  const isSitting = pose === "sit" && !isWalkingActive;
   const isPeeking = pose === "peek";
 
-  // Leg angles in radians converted to degrees
+  // Leg angles in degrees
   const sinP = Math.sin(phase);
   const sinPOpp = Math.sin(phase + Math.PI);
-  const strideAmp = isWalking ? 26 : 0;
+  const strideAmp = isWalkingActive ? 28 : 0;
 
-  const fnRot = isWalking ? sinP * strideAmp : isSitting ? 0 : 0;
-  const ffRot = isWalking ? sinPOpp * strideAmp : isSitting ? 0 : 0;
-  const bnRot = isWalking ? sinPOpp * strideAmp : isSitting ? 0 : 0;
-  const bfRot = isWalking ? sinP * strideAmp : isSitting ? 0 : 0;
+  const fnRot = isWalkingActive ? sinP * strideAmp : 0;
+  const ffRot = isWalkingActive ? sinPOpp * strideAmp : 0;
+  const bnRot = isWalkingActive ? sinPOpp * strideAmp : 0;
+  const bfRot = isWalkingActive ? sinP * strideAmp : 0;
 
-  // Body bobbing
-  const bodyBobY = isWalking ? -Math.abs(Math.sin(phase * 2)) * 3.5 : Math.sin(phase) * 1.2;
-  const bodyRot = isSitting ? -22 : isWalking ? Math.sin(phase) * 1.5 : 0;
+  // Body harmonic bobbing
+  const bodyBobY = isWalkingActive
+    ? -Math.abs(Math.sin(phase * 2)) * 3.6
+    : Math.sin(phase) * 1.2;
+  const bodyRot = isSitting ? -22 : isWalkingActive ? Math.sin(phase) * 1.6 : 0;
 
   // Tail wagging
-  const tailRot = isWalking
-    ? Math.sin(phase * 2) * 18
+  const tailRot = isWalkingActive
+    ? Math.sin(phase * 2) * 20
     : isSitting
     ? 24 + Math.sin(phase * 1.5) * 12
-    : Math.sin(phase * 1.5) * 14;
+    : 10 + Math.sin(phase * 1.5) * 14;
 
-  // Head bobbing & tilt
-  const headBobY = isWalking ? -Math.abs(Math.sin(phase * 2 - 0.7)) * 2.8 : Math.sin(phase) * 1.5;
-  const earLRot = isWalking ? Math.sin(phase * 2) * 5 : Math.sin(phase) * 3;
-  const earRRot = isWalking ? -Math.sin(phase * 2) * 5 : -Math.sin(phase) * 3;
+  // Head bobbing & ear jiggle
+  const headBobY = isWalkingActive
+    ? -Math.abs(Math.sin(phase * 2 - 0.7)) * 2.8
+    : Math.sin(phase) * 1.5;
+  const earLRot = isWalkingActive ? Math.sin(phase * 2) * 6 : Math.sin(phase) * 3;
+  const earRRot = isWalkingActive ? -Math.sin(phase * 2) * 6 : -Math.sin(phase) * 3;
 
   const rootTransform = facing === "left" ? "translate(300 0) scale(-1 1)" : undefined;
 
   return (
     <div
+      ref={containerRef}
       className={`pup-buddy relative select-none cursor-pointer ${className}`}
       style={style}
       onClick={handleClick}
       role="img"
       aria-label={label}
     >
-      {/* Speech bubble */}
+      {/* Playful speech bubble */}
       {speech && (
         <span
           className="pup-bubble pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-[#4a3728] px-3 py-1 font-scrawl text-xs font-bold text-[#fffdf8] shadow-md transition-all"
@@ -242,19 +317,19 @@ export default function PupBuddy({
         focusable="false"
       >
         <g data-p="root" transform={rootTransform}>
-          {/* Ground shadow */}
+          {/* Ground shadow - rests on floor line */}
           <ellipse
             data-p="shadow"
             cx={SHAPES.shadow.cx}
             cy={SHAPES.shadow.cy}
-            rx={isWalking ? SHAPES.shadow.rx * (1 - 0.05 * Math.abs(sinP)) : SHAPES.shadow.rx}
+            rx={isWalkingActive ? SHAPES.shadow.rx * (1 - 0.05 * Math.abs(sinP)) : SHAPES.shadow.rx}
             ry={SHAPES.shadow.ry}
             fill={PUPPY_COLORS.outline}
-            opacity={isPeeking ? 0 : 0.12}
+            opacity={isPeeking ? 0 : 0.14}
             style={{ transformBox: "fill-box", transformOrigin: "center" }}
           />
 
-          {/* Full body & legs (visible unless peeking) */}
+          {/* Full body & legs */}
           {!isPeeking && (
             <g
               data-p="body"
@@ -310,7 +385,7 @@ export default function PupBuddy({
                 </g>
               )}
 
-              {/* Tail */}
+              {/* Wagging Tail */}
               <g
                 data-p="tail"
                 transform={`rotate(${tailRot.toFixed(1)} ${JOINTS.tailBase[0]} ${JOINTS.tailBase[1]})`}
@@ -364,7 +439,7 @@ export default function PupBuddy({
                 </g>
               )}
 
-              {/* Main Body */}
+              {/* Main Fluffy Body */}
               <path
                 d={SHAPES.body}
                 fill={PUPPY_COLORS.fur}
@@ -374,7 +449,7 @@ export default function PupBuddy({
                 strokeLinejoin="round"
               />
 
-              {/* Fluffy Chest */}
+              {/* Chest */}
               <path
                 d={SHAPES.chest}
                 fill={PUPPY_COLORS.fur}
@@ -440,7 +515,7 @@ export default function PupBuddy({
             </g>
           )}
 
-          {/* Head & Face */}
+          {/* Head & Expression */}
           <g
             data-p="head"
             transform={`translate(${isSitting ? -10 : 0} ${(headBobY + (isSitting ? -6 : 0)).toFixed(1)})`}
@@ -463,7 +538,7 @@ export default function PupBuddy({
               strokeLinejoin="round"
             />
 
-            {/* Left Ear */}
+            {/* Left Ear with Jiggle */}
             <path
               data-p="earL"
               d={SHAPES.earL}
@@ -475,7 +550,7 @@ export default function PupBuddy({
               transform={`rotate(${earLRot.toFixed(1)} ${JOINTS.earLPivot[0]} ${JOINTS.earLPivot[1]})`}
             />
 
-            {/* Right Ear */}
+            {/* Right Ear with Jiggle */}
             <path
               data-p="earR"
               d={SHAPES.earR}
@@ -497,7 +572,7 @@ export default function PupBuddy({
               strokeLinejoin="round"
             />
 
-            {/* Topknot Hair */}
+            {/* Topknot Curly Fur */}
             <path
               d={SHAPES.topknot}
               fill={PUPPY_COLORS.fur}
@@ -507,14 +582,14 @@ export default function PupBuddy({
               strokeLinejoin="round"
             />
 
-            {/* Muzzle */}
+            {/* Soft Muzzle */}
             <path d={SHAPES.muzzle} fill={PUPPY_COLORS.muzzle} />
 
-            {/* Blush Cheeks */}
+            {/* Rosy Blush Cheeks */}
             <circle cx="181" cy="116" r="7" fill={PUPPY_COLORS.blush} opacity="0.85" />
             <circle cx="243" cy="116" r="7" fill={PUPPY_COLORS.blush} opacity="0.85" />
 
-            {/* Eyes */}
+            {/* Interactive Sparkling Eyes */}
             <g data-p="eyes">
               {blink > 0 ? (
                 /* Blinking eye slits */
@@ -526,7 +601,7 @@ export default function PupBuddy({
                   strokeLinecap="round"
                 />
               ) : happy ? (
-                /* Happy arch eyes */
+                /* Happy curved arch eyes */
                 <path
                   d="M186.5 101 Q194 91.5 201.5 101 M222.5 101 Q230 91.5 237.5 101"
                   fill="none"
@@ -535,7 +610,7 @@ export default function PupBuddy({
                   strokeLinecap="round"
                 />
               ) : (
-                /* Open sparkling eyes */
+                /* Open sparkling anime eyes */
                 <g data-p="open">
                   <ellipse cx="194" cy="98" rx="7.4" ry="8.6" fill={PUPPY_COLORS.outline} />
                   <ellipse cx="230" cy="98" rx="7.4" ry="8.6" fill={PUPPY_COLORS.outline} />
@@ -547,7 +622,7 @@ export default function PupBuddy({
               )}
             </g>
 
-            {/* Nose */}
+            {/* Cute Puppy Nose */}
             <path d={SHAPES.nose} fill={PUPPY_COLORS.outline} />
 
             {/* Mouth */}
@@ -560,7 +635,7 @@ export default function PupBuddy({
               strokeLinejoin="round"
             />
 
-            {/* Tongue */}
+            {/* Playful Pink Tongue */}
             <path
               data-p="tongue"
               d={SHAPES.tongue}
