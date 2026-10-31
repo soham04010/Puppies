@@ -8,7 +8,6 @@ import PawTrailCanvas from '@/components/PawTrailCanvas';
 import IntroCurtain from '@/components/IntroCurtain';
 import ScrollObserver from '@/components/ScrollObserver';
 import SmoothScroll from '@/components/SmoothScroll';
-import PupRunner from '@/components/PupRunner';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -114,10 +113,9 @@ export default function RootLayout({
         <SmoothScroll />
         <IntroCurtain />
         <PawTrailCanvas />
-        <PupRunner />
         <ScrollObserver />
         <Navbar />
-        <main id="main" className="flex-1">
+        <main id="main" tabIndex={-1} className="flex-1 relative pt-[var(--header-h)] outline-none">
           {children}
         </main>
         <Footer />

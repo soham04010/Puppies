@@ -136,18 +136,6 @@ export default function HeroSection() {
     >
       <span aria-hidden="true" className="tp-hero__sun"></span>
 
-      {/* Sky paw prints trail curving towards center puppy - exactly matching Image 2 */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden z-10">
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "93%", top: "220px", transform: "rotate(22deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "89.5%", top: "235px", transform: "rotate(16deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "86%", top: "242px", transform: "rotate(10deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "82.5%", top: "226px", transform: "rotate(2deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "79%", top: "248px", transform: "rotate(-6deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "75.5%", top: "235px", transform: "rotate(-14deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "72%", top: "255px", transform: "rotate(-22deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-        <svg viewBox="0 0 64 64" className="absolute size-4 text-[#c2622b] opacity-80" style={{ left: "68%", top: "238px", transform: "rotate(-28deg)" }}><path d={PAW_PATH} fill="currentColor" /></svg>
-      </div>
-
       <div className="tp-hero__copy gutter">
         <p className="tp-hero__note font-scrawl">
           every puppy is family

@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import PupBuddy from "@/components/PupBuddy";
 
 interface FeaturedPup {
   id: string;
@@ -398,40 +399,14 @@ export default function MeetSection() {
             {/* Wooden Floor Planks matching reference site */}
             <div aria-hidden="true" className="tp-meet__floor"></div>
 
-            {/* Mascot puppy on treadmill */}
-            <div aria-hidden="true" className="pup-stop tp-meet__teddy">
-              <svg viewBox="0 0 160 160" className="size-full" fill="none">
-                <ellipse cx="80" cy="140" rx="42" ry="6" fill="#2a170e" opacity="0.2" />
-                <path
-                  d="M48 68 Q36 60 40 82 Q44 94 54 88"
-                  fill="#e4a352"
-                  stroke="#2a170e"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M112 68 Q124 60 120 82 Q116 94 106 88"
-                  fill="#e4a352"
-                  stroke="#2a170e"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <circle cx="80" cy="88" r="38" fill="#f2be6b" stroke="#2a170e" strokeWidth="3" />
-                <circle cx="68" cy="80" r="4.5" fill="#2a170e" />
-                <circle cx="92" cy="80" r="4.5" fill="#2a170e" />
-                <circle cx="69.5" cy="78" r="1.5" fill="#fff" />
-                <circle cx="93.5" cy="78" r="1.5" fill="#fff" />
-                <ellipse cx="80" cy="92" rx="6" ry="4.5" fill="#2a170e" />
-                <path
-                  d="M80 96.5 Q74 102 68 98 M80 96.5 Q86 102 92 98"
-                  stroke="#2a170e"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                <circle cx="60" cy="92" r="5" fill="#f9b9a6" opacity="0.6" />
-                <circle cx="100" cy="92" r="5" fill="#f9b9a6" opacity="0.6" />
-              </svg>
-            </div>
+            {/* Authentic Animated Mascot Puppy on Treadmill */}
+            <PupBuddy
+              pose={isPinned ? "walk" : "sit"}
+              act={isPinned ? "treadmill" : undefined}
+              facing="right"
+              className="tp-meet__teddy"
+              strideSpeed={1.2}
+            />
           </div>
         </div>
       </div>
