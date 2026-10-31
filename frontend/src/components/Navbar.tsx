@@ -53,7 +53,10 @@ export default function Navbar() {
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border border-[#ebd9c3] bg-white shadow-xs transition-transform group-hover:scale-105">
+            <div
+              className="relative h-12 w-12 overflow-hidden rounded-full border border-[#ebd9c3] bg-white shadow-xs transition-transform group-hover:scale-105"
+              style={{ position: 'relative' }}
+            >
               <Image
                 src="/brand/logo.png"
                 alt="TeddyPups U.A.E. Logo"

@@ -81,6 +81,7 @@ export default async function HappyFamiliesPage() {
             {happyPhotos.map((item, idx) => (
               <div
                 key={idx}
+                style={{ position: 'relative' }}
                 className="group relative aspect-square overflow-hidden rounded-2xl border border-[#ebd9c3] bg-[#fbf7ee]"
               >
                 <Image

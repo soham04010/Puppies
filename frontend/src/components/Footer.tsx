@@ -11,7 +11,10 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-1 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="relative h-10 w-10 overflow-hidden rounded-full border border-[#ebd9c3] bg-white p-1">
+              <div
+                className="relative h-10 w-10 overflow-hidden rounded-full border border-[#ebd9c3] bg-white p-1"
+                style={{ position: 'relative' }}
+              >
                 <Image
                   src="/brand/logo.png"
                   alt="TeddyPups Logo"

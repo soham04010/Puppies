@@ -13,7 +13,7 @@
   --border-warm: #e8d9c5;
 }
 
-@theme {
+@theme inline {
   --color-milk: #fffdf8;
   --color-cocoa: #4a3728;
   --color-cocoa-light: #6a5340;
@@ -26,6 +26,17 @@
   --font-serif: var(--font-fraunces), Georgia, serif;
   --font-sans: var(--font-figtree), system-ui, -apple-system, sans-serif;
   --font-scrawl: var(--font-shantell), cursive, sans-serif;
+}
+
+/* Fallback position utilities for Next.js Image fill containers */
+.relative {
+  position: relative !important;
+}
+.absolute {
+  position: absolute !important;
+}
+.fixed {
+  position: fixed !important;
 }
 
 html {

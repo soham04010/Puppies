@@ -25,7 +25,10 @@ export default function PuppyGallery({ images, name }: PuppyGalleryProps) {
   return (
     <div className="space-y-4">
       {/* Main Image Frame */}
-      <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl border border-[#ebd9c3] bg-[#fbf7ee] shadow-sm">
+      <div
+        className="relative aspect-4/3 w-full overflow-hidden rounded-3xl border border-[#ebd9c3] bg-[#fbf7ee] shadow-sm"
+        style={{ position: 'relative' }}
+      >
         <Image
           src={safeImages[activeIndex]}
           alt={`${name} photo ${activeIndex + 1}`}
@@ -68,6 +71,7 @@ export default function PuppyGallery({ images, name }: PuppyGalleryProps) {
             <button
               key={idx}
               onClick={() => setActiveIndex(idx)}
+              style={{ position: 'relative' }}
               className={`relative size-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
                 activeIndex === idx ? 'border-[#4a3728] scale-105 shadow-xs' : 'border-transparent opacity-70 hover:opacity-100'
               }`}

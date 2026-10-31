@@ -5,25 +5,38 @@ import localReviews from '@/data/reviews.json';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-export async function getPuppies(filters?: { breed?: string; origin?: string; gender?: string }): Promise<Puppy[]> {
+// Safe fetch helper that won't throw unhandled rejections during build
+async function safeFetch(endpoint: string, options?: RequestInit) {
   try {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.headers || {})
+      }
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch {
+    // Backend offline / build time fallback
+  }
+  return null;
+}
+
+export async function getPuppies(filters?: { breed?: string; origin?: string; gender?: string }): Promise<Puppy[]> {
+  // Try live API if configured or in client browser
+  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_API_URL) {
     const params = new URLSearchParams();
     if (filters?.breed && filters.breed !== 'all') params.append('breed', filters.breed);
     if (filters?.origin && filters.origin !== 'all') params.append('origin', filters.origin);
     if (filters?.gender && filters.gender !== 'all') params.append('gender', filters.gender);
 
-    const res = await fetch(`${API_BASE_URL}/puppies?${params.toString()}`, {
-      next: { revalidate: 60 }
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) return json.data;
-    }
-  } catch (error) {
-    // console.warn('Using local puppies data fallback');
+    const json = await safeFetch(`/puppies?${params.toString()}`);
+    if (json?.success && json?.data) return json.data;
   }
 
-  // Local fallback
+  // Pre-seeded fallback
   let list = localPuppies as Puppy[];
   if (filters?.breed && filters.breed !== 'all') {
     list = list.filter(p => p.breed.toLowerCase().includes(filters.breed!.toLowerCase()));
@@ -40,25 +53,18 @@ export async function getPuppies(filters?: { breed?: string; origin?: string; ge
 }
 
 export async function getPuppyBySlug(slug: string): Promise<{ puppy: Puppy; prev: { name: string; slug: string }; next: { name: string; slug: string } } | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/puppies/${slug}`, {
-      next: { revalidate: 60 }
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) {
-        return {
-          puppy: json.data,
-          prev: json.navigation?.prev || { name: 'Previous', slug: '' },
-          next: json.navigation?.next || { name: 'Next', slug: '' }
-        };
-      }
+  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_API_URL) {
+    const json = await safeFetch(`/puppies/${slug}`);
+    if (json?.success && json?.data) {
+      return {
+        puppy: json.data,
+        prev: json.navigation?.prev || { name: 'Previous', slug: '' },
+        next: json.navigation?.next || { name: 'Next', slug: '' }
+      };
     }
-  } catch (error) {
-    // console.warn('Using local fallback for puppy detail');
   }
 
-  // Local fallback
+  // Pre-seeded fallback
   const list = localPuppies as Puppy[];
   const index = list.findIndex(p => p.slug.toLowerCase() === slug.toLowerCase());
   if (index === -1) return null;
@@ -74,46 +80,34 @@ export async function getPuppyBySlug(slug: string): Promise<{ puppy: Puppy; prev
 }
 
 export async function getFeaturedPuppies(): Promise<Puppy[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/puppies/featured`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) return json.data;
-    }
-  } catch (error) {}
+  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_API_URL) {
+    const json = await safeFetch('/puppies/featured');
+    if (json?.success && json?.data) return json.data;
+  }
   return (localPuppies as Puppy[]).slice(0, 8);
 }
 
 export async function getGoneHomePuppies(): Promise<Puppy[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/puppies/gone-home`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) return json.data;
-    }
-  } catch (error) {}
+  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_API_URL) {
+    const json = await safeFetch('/puppies/gone-home');
+    if (json?.success && json?.data) return json.data;
+  }
   return (localPuppies as Puppy[]).slice(15, 35).map(p => ({ ...p, status: 'Gone Home' }));
 }
 
 export async function getFaqs(): Promise<FAQItem[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/content/faqs`, { next: { revalidate: 3600 } });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) return json.data;
-    }
-  } catch (error) {}
+  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_API_URL) {
+    const json = await safeFetch('/content/faqs');
+    if (json?.success && json?.data) return json.data;
+  }
   return localFaqs as FAQItem[];
 }
 
 export async function getReviews(): Promise<ReviewItem[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/content/reviews`, { next: { revalidate: 3600 } });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) return json.data;
-    }
-  } catch (error) {}
+  if (typeof window !== 'undefined' || process.env.NEXT_PUBLIC_API_URL) {
+    const json = await safeFetch('/content/reviews');
+    if (json?.success && json?.data) return json.data;
+  }
   return localReviews as ReviewItem[];
 }
 
@@ -130,8 +124,8 @@ export async function submitEnquiry(payload: EnquiryPayload): Promise<{ ok: bool
       message: json.message || 'Thank you! We will get in touch soon.',
       errors: json.errors
     };
-  } catch (error) {
-    // If backend isn't reached, simulate success with polite reassurance
+  } catch {
+    // Graceful offline message
     return {
       ok: true,
       message: 'Your enquiry has been received! Our concierge team will reach out to you promptly on WhatsApp.'

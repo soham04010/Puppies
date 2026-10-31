@@ -18,7 +18,10 @@ export default function PuppyCard({ puppy }: PuppyCardProps) {
       className="group flex flex-col overflow-hidden rounded-2xl border border-[#ebd9c3] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
     >
       {/* Image Container */}
-      <div className="relative aspect-4/3 w-full overflow-hidden bg-[#fbf7ee]">
+      <div
+        className="relative aspect-4/3 w-full overflow-hidden bg-[#fbf7ee]"
+        style={{ position: 'relative' }}
+      >
         <Image
           src={primaryImage}
           alt={puppy.title || `${puppy.name} - ${puppy.breed}`}
