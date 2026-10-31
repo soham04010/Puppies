@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "author": "Fatima A.",
+    "location": "Downtown Dubai",
+    "pet": "Milo (Korean Teacup Maltipoo)",
+    "rating": 5,
+    "text": "TeddyPups truly made our dream a reality. They supported us at every step of the import journey. Our little Milo arrived healthy, playful, and so full of love!",
+    "date": "2026"
+  },
+  {
+    "id": 2,
+    "author": "Rashid & Sarah",
+    "location": "Dubai Marina",
+    "pet": "Bella (Teacup Pomeranian)",
+    "rating": 5,
+    "text": "Visiting the Downtown Dubai showroom was such a joy. We fell in love with Bella instantly. The health check records and vet certificate gave us total peace of mind.",
+    "date": "2026"
+  },
+  {
+    "id": 3,
+    "author": "Elena M.",
+    "location": "Palm Jumeirah",
+    "pet": "Coco (Toy Poodle)",
+    "rating": 5,
+    "text": "The 24/7 post-adoption guidance has been phenomenal. They helped us with nutrition advice and routine settling. Would recommend TeddyPups to any family in the UAE!",
+    "date": "2026"
+  },
+  {
+    "id": 4,
+    "author": "Omar K.",
+    "location": "Jumeirah Golf Estates",
+    "pet": "Teddy (Cavapoo)",
+    "rating": 5,
+    "text": "Seamless process from reservation to delivery right to our doorstep. Teddy is the sweetest addition to our home. Thank you so much!",
+    "date": "2026"
+  }
+]
