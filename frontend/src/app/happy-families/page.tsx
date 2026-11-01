@@ -84,12 +84,14 @@ export default function HappyFamiliesPage() {
 
           <div className="tp-memories__foot">
             <PupBuddy
-              pose="sit"
+              pose="happy"
               facing="left"
               label="Teddy, admiring the wall"
               className="w-36 md:w-44"
             />
-            <span className="tp-moon" aria-hidden="true" />
+            <p className="font-scrawl text-lg text-cocoa-soft">
+              every one of them was a Teddy Pup once
+            </p>
           </div>
         </div>
       </section>

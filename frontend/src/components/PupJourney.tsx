@@ -165,6 +165,7 @@ export const POSES: Record<string, PoseState> = {
   stand: BASE_POSE,
   walk: { ...BASE_POSE, tail: -6, tongue: 1 },
   sit: { ...BASE_POSE, bodyRot: -24, bodyY: -2, headX: -10, headY: -6, tail: 34, sit: 1, tongue: 1 },
+  happy: { ...BASE_POSE, bodyRot: -24, bodyY: -2, headX: -10, headY: -6, tail: 34, sit: 1, happy: 1, tongue: 1 },
   peek: { ...BASE_POSE, headY: 4, earL: -6, earR: 6, tail: -20, front: 1, tongue: 1 },
   snug: { ...BASE_POSE, headY: 9, headRot: 4, earL: 3, earR: -3, tail: -20, front: 1, tongue: 0 },
   lie: { ...BASE_POSE, bodyRot: -5, bodyY: 22, headX: 12, headY: 40, headRot: 3, fn: -84, ff: -80, sit: 1, tail: 58, tongue: 0 },
@@ -350,6 +351,7 @@ export class Puppet {
     this.target = this.pose;
     this.facing = initialFacing;
     this.facingTarget = initialFacing;
+    this.turn = 0.07;
   }
 
   setPose(pose: string | PoseState) {
@@ -448,7 +450,7 @@ export class Puppet {
     const m = this.m;
     m.time = time;
     this.pose = lerpPoses(this.pose, this.target, dampExp(dt, 0.16));
-    this.facing += (this.facingTarget - this.facing) * dampExp(dt, this.turn);
+    this.facing += (this.facingTarget - this.facing) * dampExp(dt, this.turn || 0.07);
     m.stride += (this.strideTarget - m.stride) * dampExp(dt, 0.12);
     if (m.stride < 0.012 && this.strideTarget === 0) m.stride = 0;
     m.wag += (this.wagTarget - m.wag) * dampExp(dt, 0.4);
@@ -491,7 +493,8 @@ export class Puppet {
       strideDelta > m.stride ? { ...m, stride: strideDelta } : m
     );
 
-    const safeFacing = Math.abs(this.facing) < 0.02 ? 0.02 * Math.sign(this.facing || 1) : this.facing;
+    const rawFacing = isNaN(this.facing) ? (this.facingTarget || 1) : this.facing;
+    const safeFacing = Math.abs(rawFacing) < 0.02 ? 0.02 * Math.sign(rawFacing || 1) : rawFacing;
     const rootTransform = `translate(${this.offset.toFixed(1)} 0) translate(150 0) scale(${safeFacing.toFixed(3)} 1) translate(-150 0)`;
 
     const rootEl = this.els.get("root");

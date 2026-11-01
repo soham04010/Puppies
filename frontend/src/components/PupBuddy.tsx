@@ -38,6 +38,7 @@ export default function PupBuddy({
 
     const dir = facing === "left" ? -1 : 1;
     const puppet = new Puppet(svg as unknown as SVGElement, pose, dir);
+    puppet.face(dir);
     puppet.wag(pose === "snug" ? 0.25 : 0.6);
 
     let animId: number;
