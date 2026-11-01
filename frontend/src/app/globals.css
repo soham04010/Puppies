@@ -89,20 +89,3 @@ a, button, input, select, textarea, [role="button"], label, .clickable {
   opacity: 1;
   transform: translateY(0);
 }
-
-/* Ensure puppy mascots across all sections are fully visible, accurately aligned and interactive */
-.pup-stop {
-  display: block !important;
-  pointer-events: auto !important;
-}
-.pup-stop > .pup-buddy {
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-.tp-hero__teddy {
-  z-index: 26 !important;
-}
-.tp-meet[data-pinned] .tp-meet__teddy {
-  bottom: calc(var(--floor-h) - 8px) !important;
-  z-index: 20 !important;
-}

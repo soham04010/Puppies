@@ -238,22 +238,16 @@ export default function HeroSection() {
           })}
         </ul>
 
-        {/* Center Cartoon Teddy Puppy peeking over the quilt blanket with Interactive Eyes & Click */}
+        {/* Center Cartoon Teddy Puppy peeking over the quilt blanket */}
         <div
           ref={mascotRef}
           data-pup-stop="true"
-          data-pose={isHappy ? "happy" : "peek"}
+          data-pose="peek"
           data-facing="right"
           data-act="peekaboo"
           data-behind="true"
           data-lane="true"
-          className="pup-stop tp-hero__teddy cursor-pointer select-none transition-transform active:scale-95"
-          onClick={handleMascotClick}
-          title="Click me!"
-          style={{
-            zIndex: 26,
-            bottom: "calc(var(--quilt-h) + 38px - var(--tw) * 0.2733)",
-          }}
+          className="pup-stop tp-hero__teddy"
         >
           <div className="pup-buddy" data-facing="right">
             <svg viewBox="0 0 300 240" style={{ overflow: "visible" }} role="img" aria-label="Teddy, the TeddyPups puppy, peeking over the quilt" focusable="false">
