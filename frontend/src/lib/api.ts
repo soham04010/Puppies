@@ -109,6 +109,22 @@ export async function getReviews(): Promise<ReviewItem[]> {
 
 export async function submitEnquiry(payload: EnquiryPayload): Promise<{ success: boolean; message: string }> {
   try {
+    // 1. Post to Next.js API Route Handler
+    const localRes = await fetch('/api/enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (localRes.ok) {
+      const data = await localRes.json();
+      return data;
+    }
+  } catch {
+    // Next.js route fallback
+  }
+
+  try {
+    // 2. Post to Express Backend
     const res = await safeFetch('/enquiry', {
       method: 'POST',
       body: JSON.stringify(payload)
