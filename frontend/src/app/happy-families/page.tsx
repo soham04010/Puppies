@@ -15,9 +15,9 @@ export default async function HappyFamiliesPage() {
   const [reviews, puppies] = await Promise.all([getReviews(), getPuppies()]);
 
   // Sample puppy photos to showcase alongside stories
-  const happyPhotos = puppies.slice(0, 12).map((p, i) => ({
-    image: p.images[0] || '/brand/logo.png',
-    name: p.name,
+  const happyPhotos = puppies.slice(0, 12).map((p) => ({
+    image: p.cover?.url || p.images?.[0] || '/brand/logo.png',
+    name: p.displayName || p.name,
     breed: p.breed
   }));
 

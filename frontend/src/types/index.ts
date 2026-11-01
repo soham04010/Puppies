@@ -1,15 +1,60 @@
+export interface MediaObject {
+  id: string;
+  url: string;
+  kind: 'image' | 'video';
+  width: number;
+  height: number;
+  alt: string;
+  caption?: string;
+  focalX?: number;
+  focalY?: number;
+  color?: string;
+  blurDataUrl?: string | null;
+  durationS?: number | null;
+  poster?: MediaObject | null;
+}
+
+export interface BreedRef {
+  slug: string;
+  name: string;
+}
+
+export interface OriginRef {
+  slug: string;
+  name: string;
+}
+
+export interface CollectionRef {
+  slug: string;
+  name: string;
+}
+
 export interface Puppy {
   id: string;
   slug: string;
   name: string;
-  title: string;
+  displayName: string;
   breed: string;
-  gender: string;
+  gender: 'male' | 'female' | 'male-female';
+  genderLabel: string;
   age: string;
-  origin: string;
-  status: 'Available' | 'Reserved' | 'Gone Home';
-  images: string[];
-  inclusions: string[];
+  colour?: string;
+  description?: string;
+  records?: string[];
+  status: 'available' | 'reserved' | 'rehomed';
+  featured?: boolean;
+  seoDescription?: string;
+  cover: MediaObject;
+  media: MediaObject[];
+  origin?: OriginRef;
+  collections?: CollectionRef[];
+  breeds: BreedRef[];
+  published?: boolean;
+
+  // Legacy compatibility fields if referenced anywhere
+  title?: string;
+  images?: string[];
+  inclusions?: string[];
 }
 
 export interface FAQItem {
@@ -35,6 +80,6 @@ export interface EnquiryPayload {
   area?: string;
   message?: string;
   puppyId?: string;
-  website?: string; // honeypot
+  website?: string;
   source?: 'puppy-detail' | 'contact-page';
 }
