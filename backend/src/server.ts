@@ -28,6 +28,7 @@ app.use('/media', express.static(mediaPath));
 // API Routes
 app.use('/api/puppies', puppyRoutes);
 app.use('/api/enquiries', enquiryRoutes);
+app.use('/api/enquiry', enquiryRoutes);
 app.use('/api/content', contentRoutes);
 
 // Health check
