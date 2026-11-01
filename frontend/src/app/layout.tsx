@@ -113,7 +113,6 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col bg-[#fffdf8] text-[#4a3728]">
         <SmoothScroll />
         <IntroCurtain />
-        <PawTrailCanvas />
         <PupJourney />
         <ScrollObserver />
         <Navbar />

@@ -292,7 +292,7 @@ const BINDINGS: [string, string, keyof ReturnType<typeof computePuppetFrame>][] 
 const dampExp = (t: number, e: number) => 1 - Math.exp(-t / e);
 const clampVal = (t: number, min = -1, max = 1) => Math.max(min, Math.min(max, t));
 
-class Puppet {
+export class Puppet {
   svg: SVGElement;
   els: Map<string, SVGElement>;
   written: Map<string, string>;
