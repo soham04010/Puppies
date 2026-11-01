@@ -16,17 +16,28 @@ export default function PawTrailCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    // Only enable if pointer is fine (mouse / stylus), not on touch screens
-    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-      return;
-    }
+    if (typeof window === "undefined") return;
+
+    // Check for fine pointer (mouse/stylus/trackpad)
+    const isFinePointer =
+      window.matchMedia &&
+      (window.matchMedia("(hover: hover) and (pointer: fine)").matches ||
+        window.matchMedia("(pointer: fine)").matches);
+
+    if (!isFinePointer) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const pawPath2D = new Path2D(PAW_PATH);
+    let pawPath2D: Path2D;
+    try {
+      pawPath2D = new Path2D(PAW_PATH);
+    } catch {
+      return;
+    }
+
     const paws: PawPrint[] = [];
     let dpr = 1;
     let animId = 0;
@@ -71,8 +82,24 @@ export default function PawTrailCanvas() {
       }
     };
 
-    const onPointerMove = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
+    const addPaw = (clientX: number, clientY: number, angle: number) => {
+      stepSign = -stepSign;
+      const lateralOffset = 7 * stepSign;
+      paws.push({
+        x: clientX + Math.cos(angle) * lateralOffset + 14,
+        y: clientY + Math.sin(angle) * lateralOffset + 16,
+        angle,
+        born: performance.now(),
+      });
+      if (paws.length > 14) paws.shift();
+      if (!isRunning) {
+        isRunning = true;
+        animId = requestAnimationFrame(draw);
+      }
+    };
+
+    const onPointerMove = (e: MouseEvent | PointerEvent) => {
+      if ("pointerType" in e && e.pointerType && e.pointerType !== "mouse") return;
       if (Number.isNaN(prevX)) {
         prevX = e.clientX;
         prevY = e.clientY;
@@ -86,33 +113,25 @@ export default function PawTrailCanvas() {
       if (distTravelled >= 46) {
         distTravelled = 0;
         const angle = Math.atan2(dy, dx) + Math.PI / 2;
-        stepSign = -stepSign;
-        const lateralOffset = 7 * stepSign;
-
-        paws.push({
-          x: e.clientX + Math.cos(angle) * lateralOffset + 14,
-          y: e.clientY + Math.sin(angle) * lateralOffset + 16,
-          angle: angle,
-          born: performance.now(),
-        });
-
-        if (paws.length > 14) paws.shift();
-
-        if (!isRunning) {
-          isRunning = true;
-          animId = requestAnimationFrame(draw);
-        }
+        addPaw(e.clientX, e.clientY, angle);
       }
 
       prevX = e.clientX;
       prevY = e.clientY;
     };
 
+    const onPointerDown = (e: MouseEvent | PointerEvent) => {
+      if ("pointerType" in e && e.pointerType && e.pointerType !== "mouse") return;
+      addPaw(e.clientX, e.clientY, 0);
+    };
+
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("resize", resize);
 
     return () => {
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animId);
       ctx.setTransform(1, 0, 0, 1, 0, 0);

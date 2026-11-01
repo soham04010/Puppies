@@ -121,6 +121,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <WhatsAppButton />
+        <PawTrailCanvas />
       </body>
     </html>
   );
