@@ -98,7 +98,7 @@ The project is structured as a decoupled monorepo containing a high-performance 
   4. `sent`: Postbox rests with raised flag, displaying a confirmation message, confetti burst, and direct WhatsApp CTA.
 
 ### 4. Live Email Notification System (`/api/enquiry`)
-- Form submissions are captured and dispatched via **Nodemailer** directly to `chaudharisoham041@gmail.com`.
+- Form submissions are captured and dispatched via **Nodemailer** directly to the configured concierge notification email.
 - Every email is formatted with a branded HTML template containing:
   - Prospective parent name, phone/WhatsApp (with direct `wa.me/` one-click chat link), email, and location.
   - Resolved puppy name (e.g. *"Max (Maltipoo, boy)"*).
@@ -148,11 +148,11 @@ cd Puppies
 ### 2. Configure Environment Variables
 In `frontend/`, create a `.env.local` file:
 ```env
-NOTIFICATION_EMAIL=chaudharisoham041@gmail.com
+NOTIFICATION_EMAIL=your-recipient-email@gmail.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
-SMTP_USER=chaudharisoham041@gmail.com
-SMTP_PASS=dgvateetjahambxb
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-16-character-app-password
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
@@ -161,11 +161,11 @@ In `backend/`, create a `.env` file:
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
-NOTIFICATION_EMAIL=chaudharisoham041@gmail.com
+NOTIFICATION_EMAIL=your-recipient-email@gmail.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
-SMTP_USER=chaudharisoham041@gmail.com
-SMTP_PASS=dgvateetjahambxb
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-16-character-app-password
 ```
 
 ### 3. Run the Backend API
@@ -198,11 +198,11 @@ npm run dev
    - **Build Command**: `next build` (default).
    - **Output Directory**: `.next` (default).
 3. Add Environment Variables:
-   - `NOTIFICATION_EMAIL`: `chaudharisoham041@gmail.com`
+   - `NOTIFICATION_EMAIL`: `your-recipient-email@gmail.com`
    - `SMTP_HOST`: `smtp.gmail.com`
    - `SMTP_PORT`: `465`
-   - `SMTP_USER`: `chaudharisoham041@gmail.com`
-   - `SMTP_PASS`: `dgva teet jaha mbxb`
+   - `SMTP_USER`: `your-email@gmail.com`
+   - `SMTP_PASS`: `your-16-character-app-password`
    - `NEXT_PUBLIC_API_URL`: Your Render backend URL (optional; internal serverless `/api/enquiry` handles submissions directly).
 4. Click **Deploy**. Vercel will compile and generate all 28 static routes with 0 errors.
 
@@ -217,11 +217,11 @@ npm run dev
    - **Start Command**: `npm start`
 4. Add Environment Variables:
    - `NODE_ENV`: `production`
-   - `NOTIFICATION_EMAIL`: `chaudharisoham041@gmail.com`
+   - `NOTIFICATION_EMAIL`: `your-recipient-email@gmail.com`
    - `SMTP_HOST`: `smtp.gmail.com`
    - `SMTP_PORT`: `465`
-   - `SMTP_USER`: `chaudharisoham041@gmail.com`
-   - `SMTP_PASS`: `dgva teet jaha mbxb`
+   - `SMTP_USER`: `your-email@gmail.com`
+   - `SMTP_PASS`: `your-16-character-app-password`
    - `FRONTEND_URL`: Your Vercel frontend URL (e.g. `https://teddypups.vercel.app`)
 5. Click **Create Web Service**.
 
