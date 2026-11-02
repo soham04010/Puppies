@@ -1,201 +1,234 @@
-# TeddyPups U.A.E. — Full Stack Clone Assignment
+# TeddyPups U.A.E. — Full-Stack Technical Evaluation
 
-> **Technical Round Assignment for Insta Biz Web**  
+> **Insta Biz Web Technical Assessment**  
 > **Reference Website**: [https://puppy.instabizweb.com/](https://puppy.instabizweb.com/)  
-> **Candidate Submission**: Full-stack clone matching design, layout, responsiveness, animations, custom cursor, interactive storybook components, and end-to-end functionality.
+> **Submission by**: Soham Chaudhari  
+> **Repository**: [https://github.com/soham04010/Puppies](https://github.com/soham04010/Puppies)
+
+An end-to-end, pixel-precise full-stack replication of the **TeddyPups U.A.E.** boutique pet platform. Built with decoupled `frontend/` (Next.js 16 App Router) and `backend/` (Node.js & Express REST API) services, featuring custom storybook SVG animations, viewport-fixed mascot journey physics, hardware-accelerated canvas cursor trails, and a live email notification pipeline.
 
 ---
 
-## 📌 Project Overview
+## 🏗️ Architecture & Project Structure
 
-This repository contains an end-to-end full-stack clone of the **TeddyPups U.A.E.** luxury pet boutique website (`https://puppy.instabizweb.com/`), structured cleanly into independent `frontend/` and `backend/` services.
-
-* **Frontend**: Next.js App Router (React 19, TypeScript, Tailwind CSS, Turbopack)
-* **Backend**: Node.js & Express REST API (TypeScript, CORS, Helmet, JSON Database)
-* **Storybook Animations & Custom Features**:
-  1. **Intro Blanket Curtain** (`IntroCurtain.tsx`): The signature opening blanket curtain with a running puppy SVG leaving animated paw print steps across the screen before gracefully lifting to reveal the page.
-  2. **Mad-Libs Stationery Contact Letter** (`LetterForm.tsx`): Fill-in-the-blanks handwritten letter on ruled notebook paper with a red ledger line, custom underline inputs (`tp-blank`), sitting Teddy bear mascot SVG that breathes and winks (`pup-buddy`), and an interactive multi-phase postal submission animation:
-     * `writing`: Live letterform inputs and puppy selector.
-     * `sealing`: Letter folds up, postal envelope slides in, wax seal flap closes (`tp-letter-fold`, `tp-env-in`, `tp-flap-shut`).
-     * `posting`: Mailbox pops up from below, envelope slides into the mail slot, yellow postal flag flips up (`tp-box-up`, `tp-env-post`, `tp-flag`).
-     * `sent`: Celebratory confirmation card with confetti and WhatsApp concierge link.
-  3. **Interactive WhatsApp Smartphone Simulator** (`JourneySection.tsx`): Section 4 features an interactive smartphone mockup with live WhatsApp UI, online status indicator, animated message groups with physics bounce (`tp-msg-in`), clickable breed chips, puppy photo album, showroom video clip player with custom play/pause button, animated flight route SVG, typing indicator, and direct WhatsApp send CTA.
-  4. **Two Ways Wooden Signpost & Bobbing Flight** (`TwoWaysSection.tsx`): Section 3 features a wooden fork signpost (`tp-fork`), Dubai skyline with Burj Khalifa SVG and showroom window (`tp-way--left`), and Seoul-to-Dubai flight route with an animated bobbing airplane and porthole puppy view (`tp-way--right`).
-  5. **Custom Paw Cursor & Interactive Paw Trail** (`PawTrail.tsx`): Custom SVG paw cursor (`paw.svg` and pressed state `paw-press.svg`) with interactive paw particle trail following mouse velocity.
-  6. **Scroll-Driven Observer & Parallax 3D Tilt** (`ScrollObserver.tsx`): IntersectionObserver for smooth viewport reveals (`.is-revealed`) and interactive parallax 3D perspective tilt on mouse movement (`[data-pup-look]`).
-
----
-
-## 📂 Project Structure
+The project is structured as a decoupled monorepo containing a high-performance Next.js web application and an Express.js API backend:
 
 ```
-d:\Assignment\
-│
-├── frontend/                     # Next.js App Router Web Application
+├── frontend/                         # Next.js 16 App Router Web Application
 │   ├── public/
-│   │   ├── cursor/               # paw.svg, paw-press.svg (custom cursors)
-│   │   ├── brand/                # logo.png, favicons
-│   │   └── media/                # High-resolution puppy photos, showroom video & galleries
+│   │   ├── cursor/                   # Custom SVG cursors (paw.svg & paw-press.svg)
+│   │   ├── brand/                    # Brand assets, logos, and icons
+│   │   └── media/                    # Local high-resolution puppy photos & polaroids
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── page.tsx          # Homepage (Hero, Pups, TwoWays, Journey, Reviews, FAQs, Letter)
-│   │   │   ├── puppies/          # Available puppies catalog with live filters
-│   │   │   ├── puppies/[slug]/   # Dynamic puppy profile with gallery & letterform (SSG pre-rendered)
-│   │   │   ├── how-it-works/     # Showroom vs. international import guide
-│   │   │   ├── happy-families/   # Wall of happy endings & testimonials
-│   │   │   ├── gone-home/        # Archive of happily adopted puppies
-│   │   │   ├── faq/              # Interactive 9-question accordion board
-│   │   │   ├── contact/          # Showroom address, WhatsApp CTA, and Mad-Libs letterform
-│   │   │   ├── health-guarantee/ # Veterinary standards & warranty policy
-│   │   │   ├── terms/            # Terms of service
-│   │   │   ├── privacy/          # Privacy policy
-│   │   │   ├── layout.tsx        # Root layout (Fonts, IntroCurtain, PawTrail, ScrollObserver, Navbar, Footer)
-│   │   │   └── globals.css       # Tailwind tokens & storybook animation styles
+│   │   │   ├── page.tsx              # Homepage (Hero, Meet Pups, Two Ways, Journey, Families, Dusk, FAQs)
+│   │   │   ├── puppies/              # Puppy Catalog with live breed/origin filters & gaze tracker
+│   │   │   ├── puppies/[slug]/       # Storybook detail page with 3D flip card & specs board
+│   │   │   ├── happy-families/       # 64-Polaroid masonry memory wall with washi tape & lightbox
+│   │   │   ├── how-it-works/         # Flight route scroll animation, passport promise, & care board
+│   │   │   ├── faq/                  # Pushpin notice board with 3D paper flaps & search sniffing
+│   │   │   ├── contact/              # Boutique shopfront card, Dubai skyline SVG & letterform
+│   │   │   ├── gone-home/            # Archive catalog of happily rehomed puppies
+│   │   │   ├── api/
+│   │   │   │   └── enquiry/route.ts  # Serverless email dispatch handler with Nodemailer
+│   │   │   ├── layout.tsx            # Global layout with Canvas paw trail, SmoothScroll & Curtain
+│   │   │   └── globals.css           # Tailwind CSS imports & global storybook tokens
 │   │   ├── components/
-│   │   │   ├── IntroCurtain.tsx  # Opening blanket curtain with running puppy & paw prints
-│   │   │   ├── LetterForm.tsx    # Mad-Libs stationery letterform & postal mailbox animation
-│   │   │   ├── TwoWaysSection.tsx# Wooden fork signpost, Dubai skyline & airplane flight
-│   │   │   ├── JourneySection.tsx# WhatsApp phone simulator with video clip & route animation
-│   │   │   ├── ScrollObserver.tsx# Viewport reveal observer & mouse perspective tilt
-│   │   │   ├── PawTrail.tsx      # Interactive paw particle trail on mouse move
-│   │   │   ├── Navbar.tsx        # Floating storybook header with mobile drawer
-│   │   │   ├── Footer.tsx        # Storybook footer with newsletter & social links
-│   │   │   ├── PuppyCard.tsx     # Puppy card with badges, tags & hover transitions
-│   │   │   └── FAQAccordion.tsx  # Smooth accordion component
-│   │   ├── lib/api.ts            # Resilient API client with live fetch & seeded offline fallback
-│   │   ├── styles/storybook.css  # 46 custom keyframes & storybook component styling
-│   │   ├── types/index.ts        # TypeScript definitions
-│   │   └── data/                 # Seeded JSON datasets (puppies, reviews, faqs)
+│   │   │   ├── PupJourney.tsx        # Viewport-fixed bezier interpolation puppy mascot engine
+│   │   │   ├── PupBuddy.tsx          # Multi-pose SVG mascot (sit, run, snug, happy, tilt, paw)
+│   │   │   ├── PawTrailCanvas.tsx    # High-DPI 2D canvas cursor paw trail particle animation
+│   │   │   ├── LetterForm.tsx        # Stationery letterform with 4-phase sealing/posting animation
+│   │   │   ├── IntroCurtain.tsx      # Signature blanket curtain with running puppy paw steps
+│   │   │   ├── Navbar.tsx            # Scalloped boutique navbar with active indicators
+│   │   │   ├── Footer.tsx            # Dark night footer with wavy hill silhouette & moon
+│   │   │   └── WhatsAppButton.tsx    # Floating concierge button with pulsing notification badge
+│   │   ├── data/                     # Authentic scraped dataset (puppies, breeds, FAQs, polaroids)
+│   │   ├── lib/
+│   │   │   └── api.ts                # Client API bridge with automatic serverless failover
+│   │   ├── styles/
+│   │   │   └── storybook.css         # 46+ custom @keyframes and paper/sketched CSS primitives
+│   │   └── types/                    # Comprehensive TypeScript interfaces
+│   ├── vercel.json                   # Vercel framework configuration
 │   ├── package.json
-│   └── next.config.ts
+│   └── tsconfig.json
 │
-├── backend/                      # Decoupled Node.js + Express REST API
+├── backend/                          # Decoupled Express.js REST API
 │   ├── src/
-│   │   ├── controllers/          # puppyController, enquiryController, contentController
-│   │   ├── routes/               # /api/puppies, /api/enquiries, /api/content
-│   │   ├── data/                 # puppies.json, reviews.json, faqs.json
-│   │   ├── utils/                # pathResolver (robust multi-environment path locator)
-│   │   └── server.ts             # Express entry point (CORS, Helmet, Morgan, Port 5000)
+│   │   ├── controllers/
+│   │   │   ├── puppyController.ts    # Filterable catalog queries & slug resolvers
+│   │   │   ├── enquiryController.ts  # Email notification dispatcher & file persistence
+│   │   │   └── contentController.ts  # Static CMS endpoints for FAQs, reviews, & stories
+│   │   ├── routes/
+│   │   │   ├── puppyRoutes.ts        # /api/puppies, /api/puppies/:slug, /api/puppies/featured
+│   │   │   ├── enquiryRoutes.ts      # /api/enquiry & /api/enquiries (POST/GET)
+│   │   │   └── contentRoutes.ts      # /api/content/faqs, /api/content/reviews
+│   │   ├── utils/
+│   │   │   └── pathResolver.ts       # Robust multi-environment relative path resolver
+│   │   └── server.ts                 # Express entry point (dynamic CORS, Helmet, Morgan)
 │   ├── package.json
-│   ├── tsconfig.json
-│   └── .env.example
+│   └── tsconfig.json
 │
-├── README.md                     # Comprehensive documentation & setup instructions
-├── LOOM_WALKTHROUGH.md           # Word-for-word Loom video script & guide
-└── .gitignore                    # Production git ignore configuration
+├── render.yaml                       # Render Web Service Blueprint specification
+└── README.md                         # Project documentation
 ```
 
 ---
 
-## 🛠️ Technologies & Tools Used
+## 🎨 How We Built It: Key Engineering Highlights
 
-### Frontend
-* **Framework**: Next.js 16 (App Router with Turbopack)
-* **Language**: TypeScript 5.9
-* **Styling**: Tailwind CSS v4 + Custom Storybook CSS (46 `@keyframes` animations)
-* **Fonts**: `Fraunces` (serif heading), `Figtree` (body sans), `Shantell Sans` (handwritten scrawl)
-* **Icons & Animation**: Lucide React, Canvas Confetti, SVG Morphing & CSS Transitions
+### 1. Viewport-Fixed Mascot Physics (`PupJourney.tsx` & `PupBuddy.tsx`)
+- The puppy mascot ("Teddy") accompanies the visitor down the page using bezier interpolation across 9 semantic section anchors (`#hero`, `#meet-pups`, `#two-ways`, `#journey`, `#memories`, `#trust`, `#dusk`, `#faq`, `#footer`).
+- Calculates dynamic look-at targets toward interactive elements, turns facing direction via exponential damping (`turn = 0.07`), and switches poses (`run`, `sit`, `paw`, `happy`, `snug`, `tilt`) depending on scroll velocity and stop targets.
+- Features front-facing snug basket integration in the footer with zero clipping.
 
-### Backend
-* **Runtime**: Node.js 20+
-* **Framework**: Express.js 5
-* **Security & Middleware**: Helmet, CORS (configured for localhost:3000 and production origins), Morgan logging, honeypot spam protection
-* **Architecture**: MVC pattern with controllers, route routers, and static file resolution
+### 2. Global Canvas Cursor Paw Trail (`PawTrailCanvas.tsx`)
+- High-DPI hardware-accelerated 2D canvas overlay layer (`z-[70]`) mounted globally in `layout.tsx`.
+- Monitors mouse and trackpad velocity on fine-pointer devices:
+  - Stamps an authentic puppy paw print every `46px` of travel.
+  - Alternates left and right paws with a `7px` lateral offset along the normal of the motion vector (`angle = atan2(dy, dx) + π/2`).
+  - Stamps instant paw prints on click/pointerdown.
+  - Rotates each paw in the trajectory direction and dissolves over 1000ms using a smooth quadratic curve (`globalAlpha = 0.42 * alpha²`).
+
+### 3. Interactive Stationery Letterform & 4-Phase Postal Animation (`LetterForm.tsx`)
+- Realistic lined notebook paper with red ledger rule, paw stamp, and inline dashed blanks (`name`, `phone`, `email`, `area`, `puppyId`).
+- Automated multi-stage mechanical postal submission sequence:
+  1. `writing`: Interactive client letterform with validation and bot honeypot.
+  2. `sealing`: Letter scales down and folds into a cream envelope with a red wax stamp.
+  3. `posting`: An illustrated mailbox emerges from below, the envelope slides through the slot, and the yellow flag raises.
+  4. `sent`: Postbox rests with raised flag, displaying a confirmation message, confetti burst, and direct WhatsApp CTA.
+
+### 4. Live Email Notification System (`/api/enquiry`)
+- Form submissions are captured and dispatched via **Nodemailer** directly to `chaudharisoham041@gmail.com`.
+- Every email is formatted with a branded HTML template containing:
+  - Prospective parent name, phone/WhatsApp (with direct `wa.me/` one-click chat link), email, and location.
+  - Resolved puppy name (e.g. *"Max (Maltipoo, boy)"*).
+  - Client message notes and source attribution.
+- Supported in both Next.js App Router API Route (`frontend/src/app/api/enquiry/route.ts`) for serverless deployments (Vercel) and the Express backend controller (`backend/src/controllers/enquiryController.ts`).
+
+### 5. 3D Paper Accordion Notice Board (`NoticeBoard.tsx` on `/faq`)
+- Atmospheric dark-tone room scene with a glowing radial lamp.
+- Multi-colored pushpins (`var(--color-toffee)`, `var(--color-sky-deep)`, `#d9a13c`, `#c45a6a`) with randomized paper tilts.
+- 3D mechanical fold/unfold animation (`rotateX(-82deg)` to `0deg`).
+- Real-time question sniffing filter with magnifying glass, dynamic counter, `<mark>` keyword highlighting, and Teddy mascot companion.
+
+### 6. Wall of Happy Endings (`HappyFamiliesWall.tsx` on `/happy-families`)
+- 64 authentic family moments served from local high-resolution storage.
+- Multi-column masonry layout with washi tape attachments, subtle realistic tilts, and animated paw stamps.
+- Fullscreen lightbox viewer with swipe gesture navigation, keyboard controls, and preloading.
 
 ---
 
-## 🚀 How to Run the Project Locally
+## 🛠️ Technology Stack
+
+| Domain | Technologies |
+|---|---|
+| **Frontend Framework** | **Next.js 16.4** (App Router, Turbopack, React 19) |
+| **Styling & Design** | **Tailwind CSS v4**, Custom Storybook CSS (46+ `@keyframes`), SVG Morphing |
+| **Typography** | `Fraunces` (serif heading), `Figtree` (sans body), `Shantell Sans` (handwritten cursive) |
+| **Animations & Effects** | **Framer Motion**, Canvas Confetti, Path2D Canvas API, Bezier Curves |
+| **Backend Framework** | **Node.js 20+**, **Express.js 4.21**, **TypeScript 5.7** |
+| **Email Service** | **Nodemailer** (Google SMTP / App Password) |
+| **Security & Middleware** | Helmet, CORS, Morgan logger, Honeypot bot protection |
+
+---
+
+## 💻 Local Development Setup
 
 ### Prerequisites
-* Node.js 18.x or 20.x installed
-* npm (bundled with Node.js)
+- **Node.js**: v18.x or v20+ installed
+- **npm**: v9+ (bundled with Node.js)
+- **Git**
 
-### 1. Run the Backend API
-```powershell
-# Open a terminal in the project root
-cd d:\Assignment\backend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Or build and start production server
-npm run build
-npm start
+### 1. Clone the Repository
+```bash
+git clone https://github.com/soham04010/Puppies.git
+cd Puppies
 ```
-* The backend will start on **`http://localhost:5000`**.
-* Health check endpoint: `http://localhost:5000/api/health`
-* Puppies endpoint: `http://localhost:5000/api/puppies`
 
-### 2. Run the Frontend Web Application
-```powershell
-# Open a second terminal in the project root
-cd d:\Assignment\frontend
+### 2. Configure Environment Variables
+In `frontend/`, create a `.env.local` file:
+```env
+NOTIFICATION_EMAIL=chaudharisoham041@gmail.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=chaudharisoham041@gmail.com
+SMTP_PASS=dgvateetjahambxb
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
 
-# Install dependencies
+In `backend/`, create a `.env` file:
+```env
+PORT=5000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+NOTIFICATION_EMAIL=chaudharisoham041@gmail.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=chaudharisoham041@gmail.com
+SMTP_PASS=dgvateetjahambxb
+```
+
+### 3. Run the Backend API
+```bash
+cd backend
 npm install
-
-# Start Next.js development server
 npm run dev
 ```
-* The frontend will start on **`http://localhost:3000`** (or `3001` if port 3000 is occupied).
-* Open [http://localhost:3000](http://localhost:3000) in your browser.
+- API will start on: **`http://localhost:5000`**
+- Health check: `http://localhost:5000/api/health`
+
+### 4. Run the Frontend Web Application
+In a separate terminal:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+- Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🌐 Deployment Instructions
+## 🚀 Deployment Guide
 
-### Deploy Frontend to Vercel (Recommended)
-1. Push this repository to your GitHub account:
-   ```bash
-   git add .
-   git commit -m "feat: complete website clone with animations and letterform"
-   git push origin master
-   ```
-2. Log in to [Vercel](https://vercel.com) and click **"Add New Project"**.
-3. Import your GitHub repository.
-4. Set **Root Directory** to `frontend`.
-5. Set Environment Variable:
-   * `NEXT_PUBLIC_API_URL`: Your deployed backend URL (or leave blank; the frontend has an intelligent built-in fallback containing all 42 pre-rendered puppies and data).
-6. Click **Deploy**. Vercel will build and generate all 54 static routes with 0 errors.
+### Deploying Frontend to Vercel
+1. Go to [vercel.com/new](https://vercel.com/new) and import the repository: `soham04010/Puppies`.
+2. Configure Project settings:
+   - **Root Directory**: Select **`frontend`** *(Important: must point to `frontend`)*.
+   - **Framework Preset**: `Next.js` (detected automatically).
+   - **Build Command**: `next build` (default).
+   - **Output Directory**: `.next` (default).
+3. Add Environment Variables:
+   - `NOTIFICATION_EMAIL`: `chaudharisoham041@gmail.com`
+   - `SMTP_HOST`: `smtp.gmail.com`
+   - `SMTP_PORT`: `465`
+   - `SMTP_USER`: `chaudharisoham041@gmail.com`
+   - `SMTP_PASS`: `dgva teet jaha mbxb`
+   - `NEXT_PUBLIC_API_URL`: Your Render backend URL (optional; internal serverless `/api/enquiry` handles submissions directly).
+4. Click **Deploy**. Vercel will compile and generate all 28 static routes with 0 errors.
 
-### Deploy Backend to Render / Railway
-1. In Render or Railway, choose **"New Web Service"** and connect your GitHub repo.
-2. Set **Root Directory** to `backend`.
-3. Set **Build Command**: `npm install && npm run build`
-4. Set **Start Command**: `npm start`
-5. Set Environment Variables:
-   * `PORT`: `5000`
-   * `CLIENT_URL`: Your Vercel frontend URL
-6. Click **Deploy**.
-
----
-
-## 🎥 Loom Video Walkthrough
-
-A comprehensive script and checklist is provided in [`LOOM_WALKTHROUGH.md`](file:///d:/Assignment/LOOM_WALKTHROUGH.md) covering:
-1. Executive summary & project architecture.
-2. Technologies and directory decoupling (`frontend/` vs. `backend/`).
-3. AI tools and exact prompt engineering workflow.
-4. Deep dive into the storybook animations:
-   * Running puppy blanket curtain.
-   * Mad-Libs stationery letterform with envelope folding and mailbox flag animation.
-   * Interactive WhatsApp concierge smartphone simulator with video player.
-   * Two Ways wooden signpost and bobbing airplane.
-   * Custom paw cursor and particle trail.
-5. Testing, building, and deployment process.
+### Deploying Backend to Render
+1. Go to [dashboard.render.com](https://dashboard.render.com/) → **New +** → **Web Service**.
+2. Connect repository: `soham04010/Puppies`.
+3. Configure settings:
+   - **Name**: `teddypups-backend`
+   - **Root Directory**: `backend`
+   - **Environment**: `Node`
+   - **Build Command**: `npm install --include=dev && npm run build`
+   - **Start Command**: `npm start`
+4. Add Environment Variables:
+   - `NODE_ENV`: `production`
+   - `NOTIFICATION_EMAIL`: `chaudharisoham041@gmail.com`
+   - `SMTP_HOST`: `smtp.gmail.com`
+   - `SMTP_PORT`: `465`
+   - `SMTP_USER`: `chaudharisoham041@gmail.com`
+   - `SMTP_PASS`: `dgva teet jaha mbxb`
+   - `FRONTEND_URL`: Your Vercel frontend URL (e.g. `https://teddypups.vercel.app`)
+5. Click **Create Web Service**.
 
 ---
 
-## 📄 Submission Checklist
-- [x] Exact layout and design match with `https://puppy.instabizweb.com/`
-- [x] All 11 pages built and pre-rendered
-- [x] All 42 puppies scraped with photos and detailed profiles
-- [x] Custom paw cursor and mouse trail active
-- [x] Running puppy curtain intro animation active
-- [x] Mad-Libs stationery contact form with envelope/mailbox animation active
-- [x] WhatsApp phone simulator with video clip and route animation active
-- [x] Fully decoupled `frontend/` and `backend/` directories
-- [x] 0 build errors in TypeScript and Next.js static generation
+## 📋 Quality Verification
+- [x] **0 TypeScript Compilation Errors**: Clean builds on both `npm --prefix frontend run build` and `npm --prefix backend run build`.
+- [x] **Responsive Layouts**: Pixel-accurate rendering tested across Mobile (375px–430px), Tablet (768px–1024px), and Desktop (1440px+).
+- [x] **Cross-Browser Interactive Components**: Tested cursor paw trail, postal animations, audio triggers, and 3D paper accordion on modern Chromium, WebKit, and Gecko engines.
+- [x] **Decoupled Architecture**: Fully separated `frontend/` and `backend/` directories with independent dependencies and build workflows.
